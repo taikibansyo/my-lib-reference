@@ -1,18 +1,29 @@
 document.addEventListener('DOMContentLoaded', function () {
-  const menu = new Navimenu()
+  const menu = new Navimenu( init = {
+    btn: '.navi__inner button',
+    target: '.circle',
+    bgArea: 'body',
+    container: '.navi__inner'
+  })
 })
 
 class Navimenu {
-  constructor() {
-    this.DOM = {};
-    this.DOM.btn = document.querySelectorAll('.navi__inner button');
-    this.DOM.target = document.querySelector('.circle');
-    this.DOM.bg = document.querySelector('body');
-    this.DOM.in = document.querySelector('.navi__inner');
-    this.DOM.prevIndex = 1;
-    this.eventType = this._getEventType();
+  constructor(init) {
+    this._init(init);
     this._addEvent();
+  }
+
+  _init(init) {
+    this.DOM = {};
+    this.DOM.btn = document.querySelectorAll(init.btn);
+    this.DOM.target = document.querySelector(init.target);
+    this.DOM.bg = document.querySelector(init.bgArea);
+    this.DOM.container = document.querySelector(init.container);
+    this.prevIndex = 1;
     this.dFlag = null;
+    this.circleDiameter = 40;
+    this.circleInterval = 5;
+    this.eventType = this._getEventType();
   }
 
   _getEventType() {
@@ -21,133 +32,110 @@ class Navimenu {
       (window.DocumentTouch && document instanceof window.DocumentTouch) ||
       navigator.maxTouchPoints > 0 ||
       window.navigator.msMaxTouchPoints > 0
-
     return isTouchCapable ? 'touchstart' : 'click'
   }
 
   _setStyleWidth(d, i, prev) {
-    let result = null
-    d > 0
-      ? (result = (i - prev) * 40 + (i - prev) * 5 + 40)
-      : (result = (prev - i) * 40 + (prev - i) * 5 + 40)
-    return result
+    return (d > 0)
+      ? (i - prev) * (this.circleDiameter + this.circleInterval) + this.circleDiameter
+      : (prev - i) * (this.circleDiameter + this.circleInterval) + this.circleDiameter
   }
 
   _set(t, n = {}) {
-    t.style.right = n.right;
-    t.style.left = n.left;
-    t.style.transform = `translateX(${n.x}, ${n.y})`;
-    this.DOM.in.justifyContent = `flex-${n.flex}`
+    const delay = () => {
+      setTimeout(() => {
+        if (n.right) t.style.right = n.right;
+        if (n.left) t.style.left = n.left;
+        if (n.containerFlex) this.DOM.container.justifyContent = `flex-${n.flex}`;
+        if (n.width)  t.style.width = n.width;
+      }, n.delay)
+    };
+    const nodelay = () => {
+      if (n.right) t.style.right = n.right;
+      if (n.left) t.style.left = n.left;
+      if (n.containerFlex) this.DOM.container.justifyContent = `flex-${n.flex}`;
+      if (n.width)  t.style.width = n.width;
+    };
+    (n.delay) ? delay() : nodelay();
   }
 
-  _setMoveX(d, i) {
-    let result = null
-    d > 0
-      ? result = (this.DOM.btn.length - i) * 45 + 5 // 2=140, 3=95, 4=50, 5=5
-      : result = (i - 1) * 45 + 5 // 1=5, 2=50, 3=95, 4=140
-    return result;
+  _setMoveX(d, i, prev) {
+    prev ?　d = -d : d = d ;
+    return (d > 0)
+      ? (this.DOM.btn.length - i) * (this.circleDiameter + this.circleInterval) + this.circleInterval // 2=140, 3=95, 4=50, 5=5
+      : (i - 1) * (this.circleDiameter + this.circleInterval) + this.circleInterval // 1=5, 2=50, 3=95, 4=140
   }
 
   _setMovePrev(d, i) {
-    let result = null
-    d > 0
-      ? result = (this.DOM.prevIndex - 1) * 45 + 5 
-      : result = (this.DOM.btn.length - this.DOM.prevIndex) * 45 + 5
-    return result;
+    return (d > 0)
+      ? (i - 1) * (this.circleDiameter + this.circleInterval) + this.circleInterval
+      : (this.DOM.btn.length - i) * (this.circleDiameter + this.circleInterval) + this.circleInterval
   }
 
   _toggle(dataIndex) {
     const slider = {}
-    this.DOM.target.classList.remove(`bg-color-${this.DOM.prevIndex}`),
+    this.DOM.target.classList.remove(`bg-color-${this.prevIndex}`),
     this.DOM.target.classList.toggle(`bg-color-${dataIndex}`),
-    this.DOM.bg.classList.remove(`bg-color-${this.DOM.prevIndex}`),
+    this.DOM.bg.classList.remove(`bg-color-${this.prevIndex}`),
     this.DOM.bg.classList.toggle(`bg-color-${dataIndex}`);
-    slider.direction = dataIndex - this.DOM.prevIndex,
-    (slider.positionX = dataIndex - 1 === 0 ? 0 : (dataIndex - 1) * 40),
-    (slider.positionY = this.DOM.prevIndex === 0 ? 0 : (this.DOM.btn.length - dataIndex) * 40),
-    (slider.i = this.DOM.btn.length - 1);
-
-    
-    const moveX = this._setMoveX(slider.direction, dataIndex, this.dFlag);
+    slider.direction = dataIndex - this.prevIndex;
+    const moveAfter = this._setMoveX(slider.direction, dataIndex),
+    moveSwitch = this._setMoveX(slider.direction, this.prevIndex, 'prev'),
+    moveWidth = this._setStyleWidth(slider.direction, dataIndex, this.prevIndex);
 
     if (slider.direction > 0) {
       // 右方向への移動
       if ( this.dFlag ) {
         this._set(this.DOM.target, {
           right: `auto`,
-          left: `${this._setMovePrev(slider.direction, dataIndex)}px`,
-          flex: `end`,
-          x: `5px`,
-          y: `0px`
+          left: `${moveSwitch}px`,
+          containerFlex: `end`
         });
-        this.DOM.in.style.justifyContent = `flex-start`;
-        this.DOM.target.style.width = `${this._setStyleWidth(slider.direction, dataIndex, this.DOM.prevIndex)}px`;
-        setTimeout(() => {
-          this._set(this.DOM.target, {
-            right: `${moveX}px`,
-            left: `auto`,
-            flex: `end`,
-            x: `5px`,
-            y: `0px`
-          });
-          this.DOM.target.style.width = `40px`
-        }, 320)
       }
-      this.DOM.in.style.justifyContent = `flex-start`;
-      this.DOM.target.style.width = `${this._setStyleWidth(slider.direction, dataIndex, this.DOM.prevIndex)}px`;
-      setTimeout(() => {
-        this._set(this.DOM.target, {
-          right: `${moveX}px`,
-          left: `auto`,
-          flex: `end`,
-          x: `5px`,
-          y: `0px`
-        });
-        this.DOM.target.style.width = `40px`
-      }, 320)
+
+      this._set(this.DOM.target, {
+        containerFlex: `start`,
+        width: `${moveWidth}px`
+      });
+      
+      this._set(this.DOM.target, {
+        right: `${moveAfter}px`,
+        left: `auto`,
+        containerFlex: `end`,
+        width: `${this.circleDiameter}px`,
+        delay: 320
+      });
       this.dFlag = 1;
     } else {
       // 左方向への移動
       if ( !this.dFlag ) {
         this._set(this.DOM.target, {
-          right: `${this._setMovePrev(slider.direction, dataIndex)}px`,
+          right: `${moveSwitch}px`,
           left: `auto`,
-          flex: `end`,
-          x: `5px`,
-          y: `0px`
+          containerFlex: `start`
         });
-        this.DOM.in.style.justifyContent = `flex-start`;
-        this.DOM.target.style.width = `${this._setStyleWidth(slider.direction, dataIndex, this.DOM.prevIndex)}px`;
-        setTimeout(() => {
-          this._set(this.DOM.target, {
-            right: `${moveX}px`,
-            left: `auto`,
-            flex: `end`,
-            x: `5px`,
-            y: `0px`
-          });
-          this.DOM.target.style.width = `40px`
-        }, 320)
       }
-      this.DOM.target.style.width = `${this._setStyleWidth(slider.direction, dataIndex, this.DOM.prevIndex)}px`;
-      setTimeout(() => {
-        this._set(this.DOM.target, {
-          right: `auto`,
-          left: `${moveX}px`,
-          flex: `start`,
-          x: `5px`,
-          y: `0px`
-        });
-        this.DOM.in.style.justifyContent = `flex-start`;
-        this.DOM.target.style.width = `40px`
-      }, 320)
+
+      this._set(this.DOM.target, {
+        width: `${moveWidth}px`
+      });
+
+      
+      this._set(this.DOM.target, {
+        right: `auto`,
+        left: `${moveAfter}px`,
+        containerFlex: `start`,
+        width: `${this.circleDiameter}px`,
+        delay: 320
+      });
       this.dFlag = 0;
     }
+
     this.DOM.btn.forEach((e) => {
       e.classList.remove('inview')
     })
-    this.DOM.btn[dataIndex - 1].classList.add('inview')
-    this.DOM.prevIndex = dataIndex
+    this.DOM.btn[dataIndex - 1].classList.add('inview');
+    this.prevIndex = dataIndex;
   }
 
   _addEvent() {

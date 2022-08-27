@@ -157,12 +157,8 @@ body {
 }
 
 @media (hover: hover) {
-    .navi {
-        &__inner{
-            &:hover::before {
-                transform:  scale(1);
-                opacity: 1;
-            }
-        }
+    .navi__inner button:hover::before {
+        transform:  scale(1);
+        opacity: 1;
     }
 }
