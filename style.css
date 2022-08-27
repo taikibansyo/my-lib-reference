@@ -6,6 +6,26 @@
   transition: background-color 0.8s cubic-bezier(0, 0.55, 0.45, 1);
 }
 
+.bg-color-1, .navi__inner button:nth-child(2)::before {
+  background-color: #01BDCC;
+}
+
+.bg-color-2, .navi__inner button:nth-child(3)::before {
+  background-color: #FEBC18;
+}
+
+.bg-color-3, .navi__inner button:nth-child(4)::before {
+  background-color: #E26687;
+}
+
+.bg-color-4, .navi__inner button:nth-child(5)::before {
+  background-color: #76C766;
+}
+
+.bg-color-5, .navi__inner button:nth-child(6)::before {
+  background-color: #4d42e8;
+}
+
 body {
   display: flex;
   justify-content: center;
@@ -65,7 +85,7 @@ body {
   overflow: hidden;
   transform: scale(0);
   transform-origin: center;
-  transition: all 0.32s cubic-bezier(0, 0.73, 0.48, 1.27);
+  transition: all 0.16s cubic-bezier(0, 0.73, 0.48, 1.27);
 }
 .navi__inner button span {
   color: white;
@@ -73,7 +93,7 @@ body {
 .navi__inner .circle {
   height: 40px;
   position: absolute;
-  transition: background-color 0.8s cubic-bezier(0, 0.55, 0.45, 1), width 0.32s cubic-bezier(0, 1, 0, 1);
+  transition: background-color 0.8s cubic-bezier(0, 0.55, 0.45, 1), width 0.16s cubic-bezier(0, 1, 0, 1);
 }
 .navi__btn {
   -webkit-user-select: none;
@@ -87,26 +107,6 @@ body {
   width: 40px;
   line-height: 40px;
   text-align: center;
-}
-
-.bg-color-1, .navi__inner button:nth-child(2)::before {
-  background-color: #01BDCC;
-}
-
-.bg-color-2, .navi__inner button:nth-child(3)::before {
-  background-color: #FEBC18;
-}
-
-.bg-color-3, .navi__inner button:nth-child(4)::before {
-  background-color: #E26687;
-}
-
-.bg-color-4, .navi__inner button:nth-child(5)::before {
-  background-color: #76C766;
-}
-
-.bg-color-5, .navi__inner button:nth-child(6)::before {
-  background-color: #4d42e8;
 }
 
 @media (hover: hover) {

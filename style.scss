@@ -8,6 +8,26 @@
     transition: background-color .8s cubic-bezier(0,.55,.45,1);
 }
 
+.bg-color-1 {
+    background-color: #01BDCC;
+}
+
+.bg-color-2 {
+    background-color: #FEBC18;
+}
+
+.bg-color-3 {
+    background-color: #E26687;
+}
+
+.bg-color-4 {
+    background-color: #76C766;
+}
+
+.bg-color-5 {
+    background-color: #4d42e8;
+}
+
 // parts class
 
 body {
@@ -74,7 +94,7 @@ body {
                 overflow: hidden;
                 transform: scale(0);
                 transform-origin: center;
-                transition: all .32s cubic-bezier(0, 0.73, 0.48, 1.27);
+                transition: all .16s cubic-bezier(0, 0.73, 0.48, 1.27);
             }
             
             &:nth-child(2) {
@@ -113,7 +133,7 @@ body {
             // @extend .slider-transition;
             height: 40px;
             position: absolute;
-            transition: background-color .8s cubic-bezier(0,.55,.45,1), width .32s cubic-bezier(0,1,0,1);
+            transition: background-color .8s cubic-bezier(0,.55,.45,1), width .16s cubic-bezier(0,1,0,1);
             // transform-origin: left;
         }
     }
@@ -132,29 +152,6 @@ body {
     }
 }
 
-
-
-
-
-.bg-color-1 {
-    background-color: #01BDCC;
-}
-
-.bg-color-2 {
-    background-color: #FEBC18;
-}
-
-.bg-color-3 {
-    background-color: #E26687;
-}
-
-.bg-color-4 {
-    background-color: #76C766;
-}
-
-.bg-color-5 {
-    background-color: #4d42e8;
-}
 
 @media (hover: hover) {
     .navi__inner button:hover::before {
