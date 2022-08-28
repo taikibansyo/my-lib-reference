@@ -1,28 +1,26 @@
 document.addEventListener('DOMContentLoaded', function () {
-  const menu = new Navimenu( init = {
+  const menu = new Navimenu( element = {
     btn: '.navi__inner button',
     target: '.circle',
-    bgArea: 'body',
-    container: '.navi__inner'
+    bgArea: 'body'
   })
 })
 
 class Navimenu {
-  constructor(init) {
-    this._init(init);
+  constructor(element) {
+    this.DOM = {};
+    this.DOM.btn = document.querySelectorAll(element.btn),
+    this.DOM.target = document.querySelector(element.target),
+    this.DOM.bg = document.querySelector(element.bgArea);
+    this._init();
     this._addEvent();
   }
 
-  _init(init) {
-    this.DOM = {};
-    this.DOM.btn = document.querySelectorAll(init.btn);
-    this.DOM.target = document.querySelector(init.target);
-    this.DOM.bg = document.querySelector(init.bgArea);
-    this.DOM.container = document.querySelector(init.container);
-    this.prevIndex = 1;
-    this.dFlag = null;
-    this.lockFlag = null;
-    this.circleDiameter = 40;
+  _init() {
+    this.prevIndex = 1,
+    this.dFlag = null,
+    this.lockFlag = null,
+    this.circleDiameter = 40,
     this.circleInterval = 5;
     this.eventType = this._getEventType();
   }
@@ -44,66 +42,51 @@ class Navimenu {
 
   async _sets(t, n = {}) {
     this.lockFlag = 1;
-    const delay = () => {
+    if (!n.delay) n.delay = 0;
+    return await 
       setTimeout(() => {
         if (n.right) t.style.right = n.right;
         if (n.left) t.style.left = n.left;
-        if (n.containerFlex) this.DOM.container.justifyContent = `flex-${n.flex}`;
         if (n.width)  t.style.width = n.width;
         this.lockFlag = 0;
       }, n.delay)
     };
-    const nodelay = () => {
-      setTimeout(() => {
-        if (n.right) t.style.right = n.right;
-        if (n.left) t.style.left = n.left;
-        if (n.containerFlex) this.DOM.container.justifyContent = `flex-${n.flex}`;
-        if (n.width)  t.style.width = n.width;
-    }, 0)
-    };
-    return (n.delay) ? await delay() : await nodelay();
-  }
 
   _setMoveX(d, i, prev) {
-    prev ?　d = -d : d = d ;
+    prev ? d = -d : d = d ;
     return (d > 0)
-      ? (this.DOM.btn.length - i) * (this.circleDiameter + this.circleInterval) + this.circleInterval // 2=140, 3=95, 4=50, 5=5
-      : (i - 1) * (this.circleDiameter + this.circleInterval) + this.circleInterval // 1=5, 2=50, 3=95, 4=140
+      ? (this.DOM.btn.length - i) * (this.circleDiameter + this.circleInterval) + this.circleInterval
+      : (i - 1) * (this.circleDiameter + this.circleInterval) + this.circleInterval
   }
 
   _toggle(dataIndex) {
-    // if (this.lockFlag) return;
-
-    const slider = {}
     this.DOM.target.classList.remove(`bg-color-${this.prevIndex}`),
     this.DOM.target.classList.toggle(`bg-color-${dataIndex}`),
     this.DOM.bg.classList.remove(`bg-color-${this.prevIndex}`),
     this.DOM.bg.classList.toggle(`bg-color-${dataIndex}`);
-    slider.direction = dataIndex - this.prevIndex;
-    const moveAfter = this._setMoveX(slider.direction, dataIndex),
-    moveSwitch = this._setMoveX(slider.direction, this.prevIndex, 'prev'),
-    moveWidth = this._setStyleWidth(slider.direction, dataIndex, this.prevIndex);
-
-    const moveIds = new Set();
-    if (slider.direction > 0) {
+    const move = {}
+    move.direction = dataIndex - this.prevIndex;
+    move.after = this._setMoveX(move.direction, dataIndex),
+    move.switch = this._setMoveX(move.direction, this.prevIndex, 'prev'),
+    move.width = this._setStyleWidth(move.direction, dataIndex, this.prevIndex);
+    move.ids = new Set();
+    
+    if (move.direction > 0) {
       // 右方向への移動
       if ( this.dFlag ) {
-        moveIds.add(this._sets(this.DOM.target, {
+        move.ids.add(this._sets(this.DOM.target, {
           right: `auto`,
-          left: `${moveSwitch}px`,
-          // containerFlex: `end`
+          left: `${move.switch}px`
         }));
       }
 
-      moveIds.add(this._sets(this.DOM.target, {
-        // containerFlex: `start`,
-        width: `${moveWidth}px`
+      move.ids.add(this._sets(this.DOM.target, {
+        width: `${move.width}px`
       }));
       
-      moveIds.add(this._sets(this.DOM.target, {
-        right: `${moveAfter}px`,
+      move.ids.add(this._sets(this.DOM.target, {
+        right: `${move.after}px`,
         left: `auto`,
-        // containerFlex: `end`,
         width: `${this.circleDiameter}px`,
         delay: 160
       }));
@@ -112,21 +95,19 @@ class Navimenu {
     } else {
       // 左方向への移動
       if ( !this.dFlag ) {
-        moveIds.add(this._sets(this.DOM.target, {
-          right: `${moveSwitch}px`,
-          left: `auto`,
-          containerFlex: `start`
+        move.ids.add(this._sets(this.DOM.target, {
+          right: `${move.switch}px`,
+          left: `auto`
         }))
       }
 
-      moveIds.add(this._sets(this.DOM.target, {
-        width: `${moveWidth}px`
+      move.ids.add(this._sets(this.DOM.target, {
+        width: `${move.width}px`
       }));
 
-      moveIds.add(this._sets(this.DOM.target, {
+      move.ids.add(this._sets(this.DOM.target, {
         right: `auto`,
-        left: `${moveAfter}px`,
-        containerFlex: `start`,
+        left: `${move.after}px`,
         width: `${this.circleDiameter}px`,
         delay: 160
       }));
@@ -134,7 +115,7 @@ class Navimenu {
       this.dFlag = 0;
     }
 
-    Promise.all(moveIds);
+    Promise.all(move.ids);
 
     this.DOM.btn.forEach((e) => {
       e.classList.remove('inview')
