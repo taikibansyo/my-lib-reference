@@ -5,14 +5,16 @@ interface Settings {
 }
 
 interface Dom {
-  btn: unknown;
-  target: unknown;
-  bgArea: unknown;
+  btn: any;
+  target: any;
+  bgArea: any;
 }
 
 interface Window {
   DocumentTouch: any
 }
+
+
 
 document.addEventListener('DOMContentLoaded', function () {
   const settings: Settings = {
@@ -36,7 +38,7 @@ class StaticNaviMenu {
     this.DOM = {
       btn: this._getElement(elements.btn),
       target: this._getElement(elements.target),
-      bg: this._getElement(elements.bgArea)
+      bgArea: this._getElement(elements.bgArea)
     };
     this.eventType = this._getEventType();
     this._addEvent();
@@ -55,13 +57,23 @@ class StaticNaviMenu {
     return isTouchCapable ? 'touchstart' : 'click'
   }
 
+  _addEvent() {
+    this.DOM.btn.forEach((e) => {
+      const dataIndex = parseInt(e.getAttribute('data-index')) + 1;
+      e.addEventListener(
+        this.eventType,
+        this._toggle.bind(this, dataIndex.toString())
+      )
+    })
+  }
+
   _setStyleWidth(d, i, prev) {
     return (d > 0)
       ? (i - prev) * (this.circleDiameter + this.circleInterval) + this.circleDiameter
       : (prev - i) * (this.circleDiameter + this.circleInterval) + this.circleDiameter
   }
 
-  async _sets(t, n = { delay: number}) {
+  async _sets(t, n: object = { delay: null }) { // nオブジェクトの型定義と命名を適切にしたい
     this.lockFlag = 1;
     if (!n.delay) n.delay = 0;
     return await 
@@ -83,8 +95,8 @@ class StaticNaviMenu {
   _toggle(dataIndex) {
     this.DOM.target.classList.remove(`bg-color-${this.prevIndex}`),
     this.DOM.target.classList.toggle(`bg-color-${dataIndex}`),
-    this.DOM.bg.classList.remove(`bg-color-${this.prevIndex}`),
-    this.DOM.bg.classList.toggle(`bg-color-${dataIndex}`);
+    this.DOM.bgArea.classList.remove(`bg-color-${this.prevIndex}`),
+    this.DOM.bgArea.classList.toggle(`bg-color-${dataIndex}`);
     const move = {}
     move.direction = dataIndex - this.prevIndex;
     move.after = this._setMoveX(move.direction, dataIndex),
@@ -143,15 +155,5 @@ class StaticNaviMenu {
     })
     this.DOM.btn[dataIndex - 1].classList.add('inview');
     this.prevIndex = dataIndex;
-  }
-
-  _addEvent() {
-    this.DOM.btn.forEach((e) => {
-      const dataIndex = parseInt(e.getAttribute('data-index')) + 1;
-      e.addEventListener(
-        this.eventType,
-        this._toggle.bind(this, dataIndex.toString())
-      )
-    })
   }
 }
