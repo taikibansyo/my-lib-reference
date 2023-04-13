@@ -1,36 +1,51 @@
+interface Settings {
+  btn: string;
+  target: string;
+  bgArea: string;
+}
+
+interface Window {
+  DocumentTouch: any
+}
+
 document.addEventListener('DOMContentLoaded', function () {
-  const menu = new Navimenu( element = {
+  const settings: Settings = {
     btn: '.navi__inner button',
     target: '.circle',
     bgArea: 'body'
-  })
+  }
+  const menu = new StaticNaviMenu(settings)
 })
 
-class Navimenu {
-  constructor(element) {
-    this.DOM = {};
-    this.DOM.btn = document.querySelectorAll(element.btn),
-    this.DOM.target = document.querySelector(element.target),
-    this.DOM.bg = document.querySelector(element.bgArea);
-    this._init();
+class StaticNaviMenu {
+  DOM: object
+  prevIndex: number = 1
+  dFlag: null = null
+  lockFlag: null = null
+  circleDiameter: number = 40
+  circleInterval: number = 5
+  eventType: string
+
+  constructor(elements: Settings) {
+    this.DOM = {
+      btn: this._getElement(elements.btn),
+      target: this._getElement(elements.target),
+      bg: this._getElement(elements.bgArea)
+    };
+    this.eventType = this._getEventType();
     this._addEvent();
   }
 
-  _init() {
-    this.prevIndex = 1,
-    this.dFlag = null,
-    this.lockFlag = null,
-    this.circleDiameter = 40,
-    this.circleInterval = 5;
-    this.eventType = this._getEventType();
+  _getElement(targetElement: string) {
+    return document.querySelectorAll(targetElement);
   }
 
   _getEventType() {
-    const isTouchCapable =
+    const isTouchCapable: boolean =
       'ontouchstart' in window ||
       (window.DocumentTouch && document instanceof window.DocumentTouch) ||
       navigator.maxTouchPoints > 0 ||
-      window.navigator.msMaxTouchPoints > 0
+      window.navigator.maxTouchPoints > 0
     return isTouchCapable ? 'touchstart' : 'click'
   }
 
