@@ -4,6 +4,12 @@ interface Settings {
   bgArea: string;
 }
 
+interface Dom {
+  btn: unknown;
+  target: unknown;
+  bgArea: unknown;
+}
+
 interface Window {
   DocumentTouch: any
 }
@@ -18,10 +24,10 @@ document.addEventListener('DOMContentLoaded', function () {
 })
 
 class StaticNaviMenu {
-  DOM: object
+  DOM: Dom
   prevIndex: number = 1
   dFlag: null = null
-  lockFlag: null = null
+  lockFlag: number
   circleDiameter: number = 40
   circleInterval: number = 5
   eventType: string
@@ -37,7 +43,7 @@ class StaticNaviMenu {
   }
 
   _getElement(targetElement: string) {
-    return document.querySelectorAll(targetElement);
+    return document.querySelectorAll<HTMLElement>(targetElement);
   }
 
   _getEventType() {
@@ -55,7 +61,7 @@ class StaticNaviMenu {
       : (prev - i) * (this.circleDiameter + this.circleInterval) + this.circleDiameter
   }
 
-  async _sets(t, n = {}) {
+  async _sets(t, n = { delay: number}) {
     this.lockFlag = 1;
     if (!n.delay) n.delay = 0;
     return await 
