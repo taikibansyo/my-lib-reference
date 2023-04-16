@@ -1,28 +1,34 @@
-import { Settings, Dom, Window, SetObjects } from './types/staticNaviMenu'
+import { Settings, Dom, Window, SetObjects, MeveObjects, WitchDirection, PrevDirection } from './types/staticNaviMenu'
 
 declare var window: Window;
 
   class StaticNaviMenu {
     DOM: Dom
-    prevIndex: number = 1
-    dFlag: null = null
     circleDiameter: number
     circleInterval: number
+    errorFlag: boolean
     eventType: string
+    prevIndex: number = 1
+    prevDirection: PrevDirection = 'fromLeft'
   
     constructor(settings: Settings) {
       this.DOM = {
         btn: this._getElements(settings.btn),
-        target: this._getElements(settings.target),
-        bgArea: this._getElements(settings.bgArea)
+        target: this._getElement(settings.target),
+        bgArea: this._getElement(settings.bgArea)
       };
-      this.eventType = this._getEventType();
       this.circleDiameter = settings.diameter;
       this.circleInterval = settings.interval;
+      this.eventType = this._getEventType();
+      this._init();
     }
   
     _getElements(targetElement: string) {
-      return document.querySelectorAll<HTMLElement>(targetElement) ;
+      return document.querySelectorAll<HTMLElement>(targetElement)
+    }
+  
+    _getElement(targetElement: string) {
+      return document.querySelector<HTMLElement>(targetElement)
     }
     
     _getEventType() {
@@ -33,104 +39,141 @@ declare var window: Window;
         window.navigator.maxTouchPoints > 0
       return isTouchCapable ? 'touchstart' : 'click'
     }
+
+    _init() {
+        if (this.DOM.btn === null) throw new Error(`settings.btn:${this.DOM.btn} is not defined`);
+        if (this.DOM.target === null) throw new Error(`settings.target:${this.DOM.target} is not defined`);
+        if (this.DOM.bgArea === null) throw new Error(`settings.bgArea:${this.DOM.bgArea} is not defined`);
+        return true
+    }
+
+    _setMoveX(direction: number, index:number, isPrev?: string) {
+        if ( !(this.DOM.btn === null) ) { 
+            isPrev ? direction = -direction : direction = direction ;
+            return (direction > 0)
+            ? (this.DOM.btn.length - index) * (this.circleDiameter + this.circleInterval) + this.circleInterval
+            : (index - 1) * (this.circleDiameter + this.circleInterval) + this.circleInterval
+        }
+        return false
+    }
   
-    _addEvent() {
-      this.DOM.btn.forEach((e) => {
-        const getDataIndex = e.getAttribute('data-index');
-        if (getDataIndex) { 
-           const setDataIndex = parseInt(getDataIndex) + 1;
-           e.addEventListener(
-             this.eventType,
-             this._toggle.bind(this, setDataIndex.toString())
-           )
-         }
+    _setStyleWidth(direction: number, index:number, prevIndex: number) {
+      return (direction > 0)
+        ? (index - prevIndex) * (this.circleDiameter + this.circleInterval) + this.circleDiameter
+        : (prevIndex - index) * (this.circleDiameter + this.circleInterval) + this.circleDiameter
+    }
+  
+    _setValue(target, { delay = 0, right, left, width }:SetObjects ) { 
+      return new Promise(() => {
+            setTimeout(() => {
+                if (right) target.style.right = right;
+                if (left) target.style.left = left;
+                if (width)  target.style.width = width;
+            }, delay)
       })
-    }
+    };
   
-    _setStyleWidth(d, i, prev) {
-      return (d > 0)
-        ? (i - prev) * (this.circleDiameter + this.circleInterval) + this.circleDiameter
-        : (prev - i) * (this.circleDiameter + this.circleInterval) + this.circleDiameter
-    }
   
-    _setValue(t, { delay = 0, right, left, width }:SetObjects ) { 
-      return setTimeout(() => {
-          if (right) t.style.right = right;
-          if (left) t.style.left = left;
-          if (width)  t.style.width = width;
-        }, delay)
-      };
-  
-    _setMoveX(d, i, prev) {
-      prev ? d = -d : d = d ;
-      return (d > 0)
-        ? (this.DOM.btn.length - i) * (this.circleDiameter + this.circleInterval) + this.circleInterval
-        : (i - 1) * (this.circleDiameter + this.circleInterval) + this.circleInterval
-    }
-  
-    _toggle(dataIndex) {
-      this.DOM.target[0].classList.remove(`bg-color-${this.prevIndex}`),
-      this.DOM.target.classList.toggle(`bg-color-${dataIndex}`),
-      this.DOM.bgArea.classList.remove(`bg-color-${this.prevIndex}`),
-      this.DOM.bgArea.classList.toggle(`bg-color-${dataIndex}`);
-      const move = {}
-      move.direction = dataIndex - this.prevIndex;
+    _toggle(dataIndex: number) {
+        const target = this.DOM.target;
+        const bgArea = this.DOM.bgArea;
+        const move: MeveObjects = {};
+        const prevIndex = this.prevIndex;
+        if (target === null) {
+            console.error(`settings.target:${target} is not defined`)
+        } else {
+            target.classList.remove(`bg-color-${prevIndex}`),
+            target.classList.toggle(`bg-color-${dataIndex}`);
+        }
+        if (bgArea === null) {
+            console.error(`settings.bgArea:${bgArea} is not defined`)
+        } else {
+            bgArea.classList.remove(`bg-color-${prevIndex}`),
+            bgArea.classList.toggle(`bg-color-${dataIndex}`);
+        }
+        
+      move.direction = dataIndex - prevIndex;
       move.after = this._setMoveX(move.direction, dataIndex),
-      move.switch = this._setMoveX(move.direction, this.prevIndex, 'prev'),
-      move.width = this._setStyleWidth(move.direction, dataIndex, this.prevIndex);
+      move.switch = this._setMoveX(move.direction, prevIndex, 'prev'),
+      move.width = this._setStyleWidth(move.direction, dataIndex, prevIndex);
       move.ids = new Set();
-      
+
+
+      let witchDirection: WitchDirection;
       if (move.direction > 0) {
+        witchDirection = 'isRight';
+      } else {
+        witchDirection = 'isLeft';
+      }
+      
+      if (witchDirection == 'isRight') {
         // 右方向への移動
-        if ( this.dFlag ) {
-          move.ids.add(this._setValue(this.DOM.target, {
+        if ( this.prevDirection === 'fromLeft' ) {
+          move.ids.add(this._setValue(target, {
             right: `auto`,
             left: `${move.switch}px`
           }));
         }
   
-        move.ids.add(this._setValue(this.DOM.target, {
+        move.ids.add(this._setValue(target, {
           width: `${move.width}px`
         }));
         
-        move.ids.add(this._setValue(this.DOM.target, {
+        move.ids.add(this._setValue(target, {
           right: `${move.after}px`,
           left: `auto`,
           width: `${this.circleDiameter}px`,
           delay: 160
         }));
   
-        this.dFlag = 1;
-      } else {
+        this.prevDirection = 'fromRight';
+      } else if (witchDirection == 'isLeft') {
         // 左方向への移動
-        if ( !this.dFlag ) {
-          move.ids.add(this._setValue(this.DOM.target, {
+        if ( this.prevDirection = 'fromRight' ) {
+          move.ids.add(this._setValue(target, {
             right: `${move.switch}px`,
             left: `auto`
           }))
         }
   
-        move.ids.add(this._setValue(this.DOM.target, {
+        move.ids.add(this._setValue(target, {
           width: `${move.width}px`
         }));
   
-        move.ids.add(this._setValue(this.DOM.target, {
+        move.ids.add(this._setValue(target, {
           right: `auto`,
           left: `${move.after}px`,
           width: `${this.circleDiameter}px`,
           delay: 160
         }));
   
-        this.dFlag = 0;
+        this.prevDirection = 'fromLeft';
       }
   
       Promise.all(move.ids);
   
-      this.DOM.btn.forEach((e) => {
-        e.classList.remove('inview')
-      })
-      this.DOM.btn[dataIndex - 1].classList.add('inview');
+      if ( !(this.DOM.btn === null) ) { 
+        this.DOM.btn.forEach((e) => {
+            e.classList.remove('inview')
+        })
+        this.DOM.btn[dataIndex - 1].classList.add('inview');
+      }
       this.prevIndex = dataIndex;
+    }
+  
+    addEvent() {
+        if ( !(this.DOM.btn === null) ) { 
+            this.DOM.btn.forEach((e) => {
+                const getDataIndex = e.getAttribute('data-index');
+                if (getDataIndex) { 
+                    const setDataIndex = parseInt(getDataIndex) + 1;
+                    e.addEventListener(
+                        this.eventType,
+                        this._toggle.bind(this, setDataIndex)
+                    )
+                }
+            })
+        }
     }
   }
 

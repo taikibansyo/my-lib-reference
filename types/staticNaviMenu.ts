@@ -7,9 +7,9 @@ interface Settings {
 };
 
 interface Dom {
-  btn: NodeListOf<HTMLElement>;
-  target: NodeListOf<HTMLElement>;
-  bgArea: NodeListOf<HTMLElement>;
+  btn: NodeListOf<HTMLElement> | null;
+  target: Element | null;
+  bgArea: Element | null;
 }
 
 interface Window {
@@ -24,4 +24,15 @@ interface SetObjects {
   width?: string;
 }
 
-export { Settings, Dom, Window, SetObjects}
+interface MeveObjects {
+  direction?: number;
+  after?: number | false;
+  switch?: number | false;
+  width?: number;
+  ids?: Set<undefined | Promise<any>>;
+}
+
+type WitchDirection = 'isRight' | 'isLeft';
+type PrevDirection = 'fromRight' | 'fromLeft';
+
+export { Settings, Dom, Window, SetObjects, MeveObjects, WitchDirection, PrevDirection}

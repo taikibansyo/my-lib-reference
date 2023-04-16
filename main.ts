@@ -6,10 +6,14 @@ document.addEventListener('DOMContentLoaded', () => {
     btn: '.navi__inner button',
     target: '.circle',
     bgArea: 'body',
-    Diameter : 40,
-    Interval: 5
+    diameter : 40,
+    interval: 5
 
   }
-  const menu = new StaticNaviMenu(settings)
-  menu._addEvent();
+  try{
+    const menu = new StaticNaviMenu(settings);
+    menu.addEvent();
+  } catch(e) {
+    console.error(e);
+  }
 });
