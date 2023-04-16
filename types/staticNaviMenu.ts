@@ -32,7 +32,7 @@ interface MeveObjects {
   ids?: Set<undefined | Promise<any>>;
 }
 
-type WitchDirection = 'isRight' | 'isLeft';
+type NextDirection = 'toRight' | 'toLeft';
 type PrevDirection = 'fromRight' | 'fromLeft';
 
-export { Settings, Dom, Window, SetObjects, MeveObjects, WitchDirection, PrevDirection}
+export { Settings, Dom, Window, SetObjects, MeveObjects, NextDirection, PrevDirection}

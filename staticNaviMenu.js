@@ -90,17 +90,17 @@ class StaticNaviMenu {
             move.switch = this._setMoveX(move.direction, prevIndex, 'prev'),
             move.width = this._setStyleWidth(move.direction, dataIndex, prevIndex);
         move.ids = new Set();
-        let witchDirection;
+        let nextDirection;
         if (move.direction > 0) {
-            witchDirection = 'isRight';
+            nextDirection = 'toRight';
         }
         else {
-            witchDirection = 'isLeft';
+            nextDirection = 'toLeft';
         }
-        if (!target === null) {
-            if (witchDirection == 'isRight') {
+        if (!(target === null)) {
+            if (nextDirection == 'toRight') {
                 // 右方向への移動
-                if (this.prevDirection === 'fromLeft') {
+                if (this.prevDirection == 'fromLeft') {
                     move.ids.add(this._setValue(target, {
                         right: `auto`,
                         left: `${move.switch}px`
@@ -115,11 +115,11 @@ class StaticNaviMenu {
                     width: `${this.circleDiameter}px`,
                     delay: 160
                 }));
-                this.prevDirection = 'fromRight';
+                this.prevDirection = 'fromLeft';
             }
-            else if (witchDirection == 'isLeft') {
+            else if (nextDirection == 'toLeft') {
                 // 左方向への移動
-                if (this.prevDirection = 'fromRight') {
+                if (this.prevDirection == 'fromRight') {
                     move.ids.add(this._setValue(target, {
                         right: `${move.switch}px`,
                         left: `auto`
@@ -134,7 +134,7 @@ class StaticNaviMenu {
                     width: `${this.circleDiameter}px`,
                     delay: 160
                 }));
-                this.prevDirection = 'fromLeft';
+                this.prevDirection = 'fromRight';
             }
             Promise.all(move.ids);
             if (!(this.DOM.btn === null)) {
