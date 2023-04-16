@@ -8,7 +8,7 @@ interface Settings {
 
 interface Dom {
   btn: NodeListOf<HTMLElement> | null;
-  target: Element | null;
+  target: HTMLElement | null;
   bgArea: Element | null;
 }
 

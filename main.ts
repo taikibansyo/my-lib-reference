@@ -1,4 +1,4 @@
-import { StaticNaviMenu } from './staticNaviMenu'
+import { StaticNaviMenu } from './staticNaviMenu.js'
 import { Settings } from './types/staticNaviMenu'
 
 document.addEventListener('DOMContentLoaded', () => {

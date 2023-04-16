@@ -1,4 +1,4 @@
-import { Settings, Dom, Window, SetObjects, MeveObjects, WitchDirection, PrevDirection } from './types/staticNaviMenu'
+import { Settings, Dom, Window, SetObjects, MeveObjects, WitchDirection, PrevDirection } from './types/staticNaviMenu.js'
 
 declare var window: Window;
 
@@ -6,7 +6,6 @@ declare var window: Window;
     DOM: Dom
     circleDiameter: number
     circleInterval: number
-    errorFlag: boolean
     eventType: string
     prevIndex: number = 1
     prevDirection: PrevDirection = 'fromLeft'
@@ -63,14 +62,18 @@ declare var window: Window;
         : (prevIndex - index) * (this.circleDiameter + this.circleInterval) + this.circleDiameter
     }
   
-    _setValue(target, { delay = 0, right, left, width }:SetObjects ) { 
-      return new Promise(() => {
-            setTimeout(() => {
-                if (right) target.style.right = right;
-                if (left) target.style.left = left;
-                if (width)  target.style.width = width;
-            }, delay)
-      })
+    _setValue(target: HTMLElement | null , { delay = 0, right, left, width }:SetObjects ) { 
+        if (target === null) { 
+            throw new Error(`settings.target:${this.DOM.target} is not defined`)
+        } else {
+            return new Promise(() => {
+                  setTimeout(() => {
+                      if (right) target.style.right = right;
+                      if (left) target.style.left = left;
+                      if (width)  target.style.width = width;
+                  }, delay)
+            })
+        }
     };
   
   
@@ -80,13 +83,13 @@ declare var window: Window;
         const move: MeveObjects = {};
         const prevIndex = this.prevIndex;
         if (target === null) {
-            console.error(`settings.target:${target} is not defined`)
+            console.error(`settings.target:${target} is not defined`);
         } else {
             target.classList.remove(`bg-color-${prevIndex}`),
             target.classList.toggle(`bg-color-${dataIndex}`);
         }
         if (bgArea === null) {
-            console.error(`settings.bgArea:${bgArea} is not defined`)
+            console.error(`settings.bgArea:${bgArea} is not defined`);
         } else {
             bgArea.classList.remove(`bg-color-${prevIndex}`),
             bgArea.classList.toggle(`bg-color-${dataIndex}`);
@@ -105,60 +108,62 @@ declare var window: Window;
       } else {
         witchDirection = 'isLeft';
       }
-      
-      if (witchDirection == 'isRight') {
-        // 右方向への移動
-        if ( this.prevDirection === 'fromLeft' ) {
+
+      if (!target === null) {
+        if (witchDirection == 'isRight') {
+          // 右方向への移動
+          if ( this.prevDirection === 'fromLeft' ) {
+            move.ids.add(this._setValue(target, {
+              right: `auto`,
+              left: `${move.switch}px`
+            }));
+          }
+    
+          move.ids.add(this._setValue(target, {
+            width: `${move.width}px`
+          }));
+          
+          move.ids.add(this._setValue(target, {
+            right: `${move.after}px`,
+            left: `auto`,
+            width: `${this.circleDiameter}px`,
+            delay: 160
+          }));
+    
+          this.prevDirection = 'fromRight';
+        } else if (witchDirection == 'isLeft') {
+          // 左方向への移動
+          if ( this.prevDirection = 'fromRight' ) {
+            move.ids.add(this._setValue(target, {
+              right: `${move.switch}px`,
+              left: `auto`
+            }))
+          }
+    
+          move.ids.add(this._setValue(target, {
+            width: `${move.width}px`
+          }));
+    
           move.ids.add(this._setValue(target, {
             right: `auto`,
-            left: `${move.switch}px`
+            left: `${move.after}px`,
+            width: `${this.circleDiameter}px`,
+            delay: 160
           }));
+    
+          this.prevDirection = 'fromLeft';
         }
-  
-        move.ids.add(this._setValue(target, {
-          width: `${move.width}px`
-        }));
-        
-        move.ids.add(this._setValue(target, {
-          right: `${move.after}px`,
-          left: `auto`,
-          width: `${this.circleDiameter}px`,
-          delay: 160
-        }));
-  
-        this.prevDirection = 'fromRight';
-      } else if (witchDirection == 'isLeft') {
-        // 左方向への移動
-        if ( this.prevDirection = 'fromRight' ) {
-          move.ids.add(this._setValue(target, {
-            right: `${move.switch}px`,
-            left: `auto`
-          }))
+    
+        Promise.all(move.ids);
+    
+        if ( !(this.DOM.btn === null) ) { 
+          this.DOM.btn.forEach((e) => {
+              e.classList.remove('inview')
+          })
+          this.DOM.btn[dataIndex - 1].classList.add('inview');
         }
-  
-        move.ids.add(this._setValue(target, {
-          width: `${move.width}px`
-        }));
-  
-        move.ids.add(this._setValue(target, {
-          right: `auto`,
-          left: `${move.after}px`,
-          width: `${this.circleDiameter}px`,
-          delay: 160
-        }));
-  
-        this.prevDirection = 'fromLeft';
+        this.prevIndex = dataIndex;
       }
-  
-      Promise.all(move.ids);
-  
-      if ( !(this.DOM.btn === null) ) { 
-        this.DOM.btn.forEach((e) => {
-            e.classList.remove('inview')
-        })
-        this.DOM.btn[dataIndex - 1].classList.add('inview');
-      }
-      this.prevIndex = dataIndex;
     }
   
     addEvent() {
