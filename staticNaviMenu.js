@@ -1,3 +1,4 @@
+import { window } from './types/staticNaviMenu.d';
 class StaticNaviMenu {
     constructor(settings) {
         this.prevIndex = 1;
@@ -65,7 +66,6 @@ class StaticNaviMenu {
             });
         }
     }
-    ;
     _toggle(dataIndex) {
         const target = this.DOM.target;
         const bgArea = this.DOM.bgArea;

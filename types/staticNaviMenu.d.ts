@@ -1,3 +1,5 @@
+declare var window: Window;
+
 interface Settings {
   btn: string;
   target: string;
@@ -35,4 +37,4 @@ interface MeveObjects {
 type NextDirection = 'toRight' | 'toLeft';
 type PrevDirection = 'fromRight' | 'fromLeft';
 
-export { Settings, Dom, Window, SetObjects, MeveObjects, NextDirection, PrevDirection}
+export { Settings, Dom, Window, SetObjects, MeveObjects, NextDirection, PrevDirection, window}

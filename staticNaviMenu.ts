@@ -1,6 +1,4 @@
-import { Settings, Dom, Window, SetObjects, MeveObjects, NextDirection, PrevDirection } from './types/staticNaviMenu.js'
-
-declare var window: Window;
+import { window, Settings, Dom, SetObjects, MeveObjects, NextDirection, PrevDirection } from './types/staticNaviMenu.d'
 
   class StaticNaviMenu {
     DOM: Dom
@@ -74,8 +72,7 @@ declare var window: Window;
                   }, delay)
             })
         }
-    };
-  
+    }
   
     _toggle(dataIndex: number) {
         const target = this.DOM.target;
