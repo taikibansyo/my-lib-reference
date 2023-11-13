@@ -8,8 +8,11 @@ document.addEventListener('DOMContentLoaded', () => {
         interval: 5
     };
     try {
+        const startTime = performance.now();
         const menu = new StaticNaviMenu(settings);
         menu.addEvent();
+        const endTime = performance.now();
+        console.log(endTime - startTime);
     }
     catch (e) {
         console.error(e);

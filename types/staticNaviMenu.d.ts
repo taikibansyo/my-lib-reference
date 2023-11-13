@@ -6,7 +6,7 @@ interface Settings {
   bgArea: string;
   diameter: number;
   interval: number;
-};
+}
 
 interface Dom {
   btn: NodeListOf<HTMLElement> | null;

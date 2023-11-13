@@ -1,4 +1,4 @@
-import { window } from './types/staticNaviMenu.d';
+// import { window } from './types/staticNaviMenu.d';
 class StaticNaviMenu {
     constructor(settings) {
         this.prevIndex = 1;
