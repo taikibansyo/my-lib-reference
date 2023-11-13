@@ -1,16 +1,16 @@
-// import { window } from './types/staticNaviMenu.d';
 class StaticNaviMenu {
     constructor(settings) {
+        // eventType: string;
         this.prevIndex = 1;
-        this.prevDirection = 'fromLeft';
+        this.prevDirection = "fromLeft";
         this.DOM = {
             btn: this._getElements(settings.btn),
             target: this._getElement(settings.target),
-            bgArea: this._getElement(settings.bgArea)
+            bgArea: this._getElement(settings.bgArea),
         };
         this.circleDiameter = settings.diameter;
         this.circleInterval = settings.interval;
-        this.eventType = this._getEventType();
+        // this.eventType = this._getEventType();
         this._init();
     }
     _getElements(targetElement) {
@@ -19,13 +19,14 @@ class StaticNaviMenu {
     _getElement(targetElement) {
         return document.querySelector(targetElement);
     }
-    _getEventType() {
-        const isTouchCapable = 'ontouchstart' in window ||
-            (window.DocumentTouch && document instanceof window.DocumentTouch) ||
-            navigator.maxTouchPoints > 0 ||
-            window.navigator.maxTouchPoints > 0;
-        return isTouchCapable ? 'touchstart' : 'click';
-    }
+    // _getEventType() {
+    //   const isTouchCapable: boolean =
+    //     "ontouchstart" in window ||
+    //     (window.DocumentTouch && document instanceof window.DocumentTouch) ||
+    //     navigator.maxTouchPoints > 0 ||
+    //     window.navigator.maxTouchPoints > 0;
+    //   return isTouchCapable ? "touchstart" : "click";
+    // }
     _init() {
         if (this.DOM.btn === null)
             throw new Error(`settings.btn:${this.DOM.btn} is not defined`);
@@ -37,17 +38,22 @@ class StaticNaviMenu {
     }
     _setMoveX(direction, index, isPrev) {
         if (!(this.DOM.btn === null)) {
-            isPrev ? direction = -direction : direction = direction;
-            return (direction > 0)
-                ? (this.DOM.btn.length - index) * (this.circleDiameter + this.circleInterval) + this.circleInterval
-                : (index - 1) * (this.circleDiameter + this.circleInterval) + this.circleInterval;
+            isPrev ? (direction = -direction) : (direction = direction);
+            return direction > 0
+                ? (this.DOM.btn.length - index) *
+                    (this.circleDiameter + this.circleInterval) +
+                    this.circleInterval
+                : (index - 1) * (this.circleDiameter + this.circleInterval) +
+                    this.circleInterval;
         }
         return false;
     }
     _setStyleWidth(direction, index, prevIndex) {
-        return (direction > 0)
-            ? (index - prevIndex) * (this.circleDiameter + this.circleInterval) + this.circleDiameter
-            : (prevIndex - index) * (this.circleDiameter + this.circleInterval) + this.circleDiameter;
+        return direction > 0
+            ? (index - prevIndex) * (this.circleDiameter + this.circleInterval) +
+                this.circleDiameter
+            : (prevIndex - index) * (this.circleDiameter + this.circleInterval) +
+                this.circleDiameter;
     }
     _setValue(target, { delay = 0, right, left, width }) {
         if (target === null) {
@@ -86,62 +92,62 @@ class StaticNaviMenu {
                 bgArea.classList.toggle(`bg-color-${dataIndex}`);
         }
         move.direction = dataIndex - prevIndex;
-        move.after = this._setMoveX(move.direction, dataIndex),
-            move.switch = this._setMoveX(move.direction, prevIndex, 'prev'),
-            move.width = this._setStyleWidth(move.direction, dataIndex, prevIndex);
+        (move.after = this._setMoveX(move.direction, dataIndex)),
+            (move.switch = this._setMoveX(move.direction, prevIndex, "prev")),
+            (move.width = this._setStyleWidth(move.direction, dataIndex, prevIndex));
         move.ids = new Set();
         let nextDirection;
         if (move.direction > 0) {
-            nextDirection = 'toRight';
+            nextDirection = "toRight";
         }
         else {
-            nextDirection = 'toLeft';
+            nextDirection = "toLeft";
         }
         if (!(target === null)) {
-            if (nextDirection == 'toRight') {
+            if (nextDirection == "toRight") {
                 // 右方向への移動
-                if (this.prevDirection == 'fromLeft') {
+                if (this.prevDirection == "fromLeft") {
                     move.ids.add(this._setValue(target, {
                         right: `auto`,
-                        left: `${move.switch}px`
+                        left: `${move.switch}px`,
                     }));
                 }
                 move.ids.add(this._setValue(target, {
-                    width: `${move.width}px`
+                    width: `${move.width}px`,
                 }));
                 move.ids.add(this._setValue(target, {
                     right: `${move.after}px`,
                     left: `auto`,
                     width: `${this.circleDiameter}px`,
-                    delay: 160
+                    delay: 160,
                 }));
-                this.prevDirection = 'fromLeft';
+                this.prevDirection = "fromLeft";
             }
-            else if (nextDirection == 'toLeft') {
+            else if (nextDirection == "toLeft") {
                 // 左方向への移動
-                if (this.prevDirection == 'fromRight') {
+                if (this.prevDirection == "fromRight") {
                     move.ids.add(this._setValue(target, {
                         right: `${move.switch}px`,
-                        left: `auto`
+                        left: `auto`,
                     }));
                 }
                 move.ids.add(this._setValue(target, {
-                    width: `${move.width}px`
+                    width: `${move.width}px`,
                 }));
                 move.ids.add(this._setValue(target, {
                     right: `auto`,
                     left: `${move.after}px`,
                     width: `${this.circleDiameter}px`,
-                    delay: 160
+                    delay: 160,
                 }));
-                this.prevDirection = 'fromRight';
+                this.prevDirection = "fromRight";
             }
             Promise.all(move.ids);
             if (!(this.DOM.btn === null)) {
                 this.DOM.btn.forEach((e) => {
-                    e.classList.remove('inview');
+                    e.classList.remove("inview");
                 });
-                this.DOM.btn[dataIndex - 1].classList.add('inview');
+                this.DOM.btn[dataIndex - 1].classList.add("inview");
             }
             this.prevIndex = dataIndex;
         }
@@ -149,10 +155,10 @@ class StaticNaviMenu {
     addEvent() {
         if (!(this.DOM.btn === null)) {
             this.DOM.btn.forEach((e) => {
-                const getDataIndex = e.getAttribute('data-index');
+                const getDataIndex = e.getAttribute("data-index");
                 if (getDataIndex) {
                     const setDataIndex = parseInt(getDataIndex) + 1;
-                    e.addEventListener(this.eventType, this._toggle.bind(this, setDataIndex));
+                    e.addEventListener("click", this._toggle.bind(this, setDataIndex));
                 }
             });
         }

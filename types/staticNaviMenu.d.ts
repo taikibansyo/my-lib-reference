@@ -1,5 +1,3 @@
-declare var window: Window;
-
 interface Settings {
   btn: string;
   target: string;
@@ -34,7 +32,16 @@ interface MeveObjects {
   ids?: Set<undefined | Promise<any>>;
 }
 
-type NextDirection = 'toRight' | 'toLeft';
-type PrevDirection = 'fromRight' | 'fromLeft';
+type NextDirection = "toRight" | "toLeft";
+type PrevDirection = "fromRight" | "fromLeft";
 
-export { Settings, Dom, Window, SetObjects, MeveObjects, NextDirection, PrevDirection, window}
+export {
+  Settings,
+  Dom,
+  Window,
+  SetObjects,
+  MeveObjects,
+  NextDirection,
+  PrevDirection,
+  window,
+};
