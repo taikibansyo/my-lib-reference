@@ -16,6 +16,7 @@ interface Window {
   DocumentTouch: any;
   navigator: any;
 }
+declare var window: Window;
 
 interface SetObjects {
   delay?: number;
