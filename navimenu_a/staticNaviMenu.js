@@ -1,6 +1,5 @@
 class StaticNaviMenu {
     constructor(settings) {
-        // eventType: string;
         this.prevIndex = 1;
         this.prevDirection = "fromLeft";
         this.DOM = {
@@ -10,7 +9,6 @@ class StaticNaviMenu {
         };
         this.circleDiameter = settings.diameter;
         this.circleInterval = settings.interval;
-        // this.eventType = this._getEventType();
         this._init();
     }
     _getElements(targetElement) {
@@ -19,14 +17,6 @@ class StaticNaviMenu {
     _getElement(targetElement) {
         return document.querySelector(targetElement);
     }
-    // _getEventType() {
-    //   const isTouchCapable: boolean =
-    //     "ontouchstart" in window ||
-    //     (window.DocumentTouch && document instanceof window.DocumentTouch) ||
-    //     navigator.maxTouchPoints > 0 ||
-    //     window.navigator.maxTouchPoints > 0;
-    //   return isTouchCapable ? "touchstart" : "click";
-    // }
     _init() {
         if (this.DOM.btn === null)
             throw new Error(`settings.btn:${this.DOM.btn} is not defined`);
