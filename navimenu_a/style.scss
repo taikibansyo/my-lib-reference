@@ -132,6 +132,7 @@ body {
             @extend .rounded;
             // @extend .slider-transition;
             height: 40px;
+            width: 40px;
             position: absolute;
             transition: background-color .8s cubic-bezier(0,.55,.45,1), width .16s cubic-bezier(0,1,0,1);
             // transform-origin: left;
