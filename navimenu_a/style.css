@@ -44,7 +44,6 @@ body {
   margin: auto;
   -webkit-user-select: none;
      -moz-user-select: none;
-      -ms-user-select: none;
           user-select: none;
   -webkit-touch-callout: none;
 }
@@ -92,13 +91,13 @@ body {
 }
 .navi__inner .circle {
   height: 40px;
+  width: 40px;
   position: absolute;
   transition: background-color 0.8s cubic-bezier(0, 0.55, 0.45, 1), width 0.16s cubic-bezier(0, 1, 0, 1);
 }
 .navi__btn {
   -webkit-user-select: none;
      -moz-user-select: none;
-      -ms-user-select: none;
           user-select: none;
   -webkit-touch-callout: none;
 }
