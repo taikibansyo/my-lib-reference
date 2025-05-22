@@ -2,7 +2,7 @@ import {
   Settings,
   Dom,
   SetObjects,
-  MeveObjects,
+  MoveObjects,
   NextDirection,
   PrevDirection,
 } from "./types/staticNaviMenu.d";
@@ -11,8 +11,9 @@ class StaticNaviMenu {
   DOM: Dom;
   circleDiameter: number;
   circleInterval: number;
-  prevIndex: number = 1;
+  previousIndex: number = 1;
   prevDirection: PrevDirection = "fromLeft";
+  DEFAULT_ANIMATION_DELAY: number = 160;
 
   constructor(settings: Settings) {
     this.DOM = {
@@ -56,54 +57,140 @@ class StaticNaviMenu {
     return false;
   }
 
-  _setStyleWidth(direction: number, index: number, prevIndex: number) {
+  _setStyleWidth(direction: number, index: number, previousIndex: number) {
     return direction > 0
-      ? (index - prevIndex) * (this.circleDiameter + this.circleInterval) +
+      ? (index - previousIndex) * (this.circleDiameter + this.circleInterval) +
           this.circleDiameter
-      : (prevIndex - index) * (this.circleDiameter + this.circleInterval) +
+      : (previousIndex - index) * (this.circleDiameter + this.circleInterval) +
           this.circleDiameter;
   }
 
-  _setValue(
+  _setValueAsync(
     target: HTMLElement | null,
-    { delay = 0, right, left, width }: SetObjects
-  ) {
+    styles: SetObjects
+  ): Promise<void> {
     if (target === null) {
       throw new Error(`settings.target:${this.DOM.target} is not defined`);
     } else {
-      return new Promise(() => {
+      return new Promise<void>((resolve) => {
         setTimeout(() => {
-          if (right) target.style.right = right;
-          if (left) target.style.left = left;
-          if (width) target.style.width = width;
-        }, delay);
+          if (styles.right) target.style.right = styles.right;
+          if (styles.left) target.style.left = styles.left;
+          if (styles.width) target.style.width = styles.width;
+          resolve();
+        }, styles.delay ?? 0);
       });
     }
+  }
+
+  _toggleClass(element: HTMLElement, className: string, action: string) {
+    switch (action) {
+      case "add":
+        {
+          element.classList.add(className);
+        }
+        break;
+      case "remove":
+        {
+          element.classList.remove(className);
+        }
+        break;
+      case "toggle":
+        {
+          element.classList.toggle(className);
+        }
+        break;
+      default:
+        console.warn(`Invalid action: ${action}`);
+    }
+  }
+
+  _animateIndicatorToRight(move: MoveObjects, target: HTMLElement) {
+    // 右方向への移動
+    if (this.prevDirection == "fromLeft") {
+      move.ids.add(
+        this._setValueAsync(target, {
+          right: `auto`,
+          left: `${move.switch}px`,
+        })
+      );
+    }
+
+    move.ids.add(
+      this._setValueAsync(target, {
+        width: `${move.width}px`,
+      })
+    );
+
+    move.ids.add(
+      this._setValueAsync(target, {
+        right: `${move.after}px`,
+        left: `auto`,
+        width: `${this.circleDiameter}px`,
+        delay: this.DEFAULT_ANIMATION_DELAY,
+      })
+    );
+
+    this.prevDirection = "fromLeft";
+  }
+
+  _animateIndicatorToLeft(move: MoveObjects, target: HTMLElement) {
+    // 左方向への移動
+    if (this.prevDirection == "fromRight") {
+      move.ids.add(
+        this._setValueAsync(target, {
+          right: `${move.switch}px`,
+          left: `auto`,
+        })
+      );
+    }
+
+    move.ids.add(
+      this._setValueAsync(target, {
+        width: `${move.width}px`,
+      })
+    );
+
+    move.ids.add(
+      this._setValueAsync(target, {
+        right: `auto`,
+        left: `${move.after}px`,
+        width: `${this.circleDiameter}px`,
+        delay: this.DEFAULT_ANIMATION_DELAY,
+      })
+    );
+
+    this.prevDirection = "fromRight";
   }
 
   _toggle(dataIndex: number) {
     const target = this.DOM.target;
     const bgArea = this.DOM.bgArea;
-    const move: MeveObjects = {};
-    const prevIndex = this.prevIndex;
+    const move: MoveObjects = {
+      ids: new Set(),
+    };
+    const previousIndex = this.previousIndex;
     if (target === null) {
       console.error(`settings.target:${target} is not defined`);
     } else {
-      target.classList.remove(`bg-color-${prevIndex}`),
-        target.classList.toggle(`bg-color-${dataIndex}`);
+      this._toggleClass(target, `bg-color-${previousIndex}`, "remove");
+      this._toggleClass(target, `bg-color-${dataIndex}`, "toggle");
     }
     if (bgArea === null) {
       console.error(`settings.bgArea:${bgArea} is not defined`);
     } else {
-      bgArea.classList.remove(`bg-color-${prevIndex}`),
-        bgArea.classList.toggle(`bg-color-${dataIndex}`);
+      this._toggleClass(bgArea, `bg-color-${previousIndex}`, "remove");
+      this._toggleClass(bgArea, `bg-color-${dataIndex}`, "toggle");
     }
 
-    move.direction = dataIndex - prevIndex;
+    move.direction = dataIndex - previousIndex;
     (move.after = this._setMoveX(move.direction, dataIndex)),
-      (move.switch = this._setMoveX(move.direction, prevIndex, "prev")),
-      (move.width = this._setStyleWidth(move.direction, dataIndex, prevIndex));
-    move.ids = new Set();
+      (move.switch = this._setMoveX(move.direction, previousIndex, "prev")),
+      (move.width = this._setStyleWidth(
+        move.direction,
+        dataIndex,
+        previousIndex
+      ));
 
     let nextDirection: NextDirection;
     if (move.direction > 0) {
@@ -114,59 +201,9 @@ class StaticNaviMenu {
 
     if (!(target === null)) {
       if (nextDirection == "toRight") {
-        // 右方向への移動
-        if (this.prevDirection == "fromLeft") {
-          move.ids.add(
-            this._setValue(target, {
-              right: `auto`,
-              left: `${move.switch}px`,
-            })
-          );
-        }
-
-        move.ids.add(
-          this._setValue(target, {
-            width: `${move.width}px`,
-          })
-        );
-
-        move.ids.add(
-          this._setValue(target, {
-            right: `${move.after}px`,
-            left: `auto`,
-            width: `${this.circleDiameter}px`,
-            delay: 160,
-          })
-        );
-
-        this.prevDirection = "fromLeft";
+        this._animateIndicatorToRight(move, target);
       } else if (nextDirection == "toLeft") {
-        // 左方向への移動
-        if (this.prevDirection == "fromRight") {
-          move.ids.add(
-            this._setValue(target, {
-              right: `${move.switch}px`,
-              left: `auto`,
-            })
-          );
-        }
-
-        move.ids.add(
-          this._setValue(target, {
-            width: `${move.width}px`,
-          })
-        );
-
-        move.ids.add(
-          this._setValue(target, {
-            right: `auto`,
-            left: `${move.after}px`,
-            width: `${this.circleDiameter}px`,
-            delay: 160,
-          })
-        );
-
-        this.prevDirection = "fromRight";
+        this._animateIndicatorToLeft(move, target);
       }
 
       Promise.all(move.ids);
@@ -175,9 +212,9 @@ class StaticNaviMenu {
         this.DOM.btn.forEach((e) => {
           e.classList.remove("inview");
         });
-        this.DOM.btn[dataIndex - 1].classList.add("inview");
+        this._toggleClass(this.DOM.btn[dataIndex - 1], "inview", "add");
       }
-      this.prevIndex = dataIndex;
+      this.previousIndex = dataIndex;
     }
   }
 

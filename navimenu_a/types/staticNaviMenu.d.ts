@@ -9,7 +9,7 @@ interface Settings {
 interface Dom {
   btn: NodeListOf<HTMLElement> | null;
   target: HTMLElement | null;
-  bgArea: Element | null;
+  bgArea: HTMLElement | null;
 }
 
 interface Window {
@@ -25,12 +25,12 @@ interface SetObjects {
   width?: string;
 }
 
-interface MeveObjects {
+interface MoveObjects {
   direction?: number;
   after?: number | false;
   switch?: number | false;
   width?: number;
-  ids?: Set<undefined | Promise<any>>;
+  ids: Set<Promise<void>>;
 }
 
 type NextDirection = "toRight" | "toLeft";
@@ -41,7 +41,7 @@ export {
   Dom,
   Window,
   SetObjects,
-  MeveObjects,
+  MoveObjects,
   NextDirection,
   PrevDirection,
   window,
