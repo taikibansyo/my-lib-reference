@@ -1,5 +1,5 @@
-import { StaticNaviMenu } from "./staticNaviMenu.js";
-import { Settings } from "./types/staticNaviMenu";
+import { StaticNaviMenu } from "./staticNaviMenu/index.js";
+import { Settings } from "./staticNaviMenu/types/staticNaviMenu.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   const settings: Settings = {
