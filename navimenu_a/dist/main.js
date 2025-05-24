@@ -1,4 +1,4 @@
-import { StaticNaviMenu } from "./staticNaviMenu.js";
+import { StaticNaviMenu } from "./staticNaviMenu/index.js";
 document.addEventListener("DOMContentLoaded", () => {
     const settings = {
         btn: ".navi__inner button",
