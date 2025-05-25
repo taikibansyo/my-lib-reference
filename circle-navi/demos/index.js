@@ -1,5 +1,5 @@
 const DEFAULT_ANIMATION_DELAY = 160;
-class StaticNaviMenu {
+class CircleNavi {
     constructor(settings) {
         this.previousIndex = 1;
         this.prevDirection = "fromLeft";
@@ -158,4 +158,4 @@ class StaticNaviMenu {
         });
     }
 }
-export { StaticNaviMenu };
+export { CircleNavi };
