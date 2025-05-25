@@ -5,11 +5,11 @@ import {
   MoveObjects,
   NextDirection,
   PrevDirection,
-} from "../types/staticNaviMenu";
+} from "../types/circleNavi";
 
 const DEFAULT_ANIMATION_DELAY: number = 160;
 
-class StaticNaviMenu {
+class CircleNavi {
   DOM: Dom;
   circleDiameter: number;
   circleInterval: number;
@@ -221,4 +221,4 @@ class StaticNaviMenu {
   }
 }
 
-export { StaticNaviMenu };
+export { CircleNavi };

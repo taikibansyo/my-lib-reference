@@ -1,5 +1,5 @@
-import { Settings, Dom, PrevDirection } from "./staticNaviMenu";
-declare class StaticNaviMenu {
+import { Settings, Dom, PrevDirection } from "./circleNavi";
+declare class CircleNavi {
   DOM: Dom;
   circleDiameter: number;
   circleInterval: number;
@@ -17,4 +17,4 @@ declare class StaticNaviMenu {
   private _toggle;
   addEvent(): void;
 }
-export { StaticNaviMenu };
+export { CircleNavi };

@@ -38,9 +38,9 @@
         </button>
       </div>
     </div>
-    <!-- Initialize StaticNaviMenu -->
+    <!-- Initialize CircleNavi -->
     <script type="module">
-      import { StaticNaviMenu } from "./index.js";
+      import { CircleNavi } from "./index.js";
       document.addEventListener("DOMContentLoaded", () => {
         const settings = {
           btn: ".navi__inner button",
@@ -50,7 +50,7 @@
           interval: 5,
         };
         try {
-          const menu = new StaticNaviMenu(settings);
+          const menu = new CircleNavi(settings);
           menu.addEvent();
         }
         catch (e) {
