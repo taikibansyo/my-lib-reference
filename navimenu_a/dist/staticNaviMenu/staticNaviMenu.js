@@ -7,7 +7,7 @@ class StaticNaviMenu {
         const target = this._getElement(settings.target);
         const bgArea = this._getElement(settings.bgArea);
         if (!btn || !target || !bgArea)
-            throw new Error("必要なDOMが見つかりません");
+            throw new Error(`必要なDOMが見つかりません。`);
         this.DOM = { btn, target, bgArea };
         this.circleDiameter = settings.diameter;
         this.circleInterval = settings.interval;
@@ -36,6 +36,7 @@ class StaticNaviMenu {
     }
     _setValueAsync(target, styles) {
         return new Promise((resolve) => {
+            var _a;
             setTimeout(() => {
                 ["right", "left", "width"].forEach((key) => {
                     const value = styles[key];
@@ -44,7 +45,7 @@ class StaticNaviMenu {
                     }
                 });
                 resolve();
-            }, styles.delay ?? 0);
+            }, (_a = styles.delay) !== null && _a !== void 0 ? _a : 0);
         });
     }
     _toggleClass(element, className, action) {

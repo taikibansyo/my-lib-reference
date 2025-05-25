@@ -5,7 +5,7 @@ import {
   MoveObjects,
   NextDirection,
   PrevDirection,
-} from "./types/staticNaviMenu";
+} from "../types/staticNaviMenu";
 
 const DEFAULT_ANIMATION_DELAY: number = 160;
 
@@ -21,7 +21,7 @@ class StaticNaviMenu {
     const target = this._getElement(settings.target);
     const bgArea = this._getElement(settings.bgArea);
     if (!btn || !target || !bgArea)
-      throw new Error(`必要なDOMが見つかりません。${messages.join("\n")}`);
+      throw new Error(`必要なDOMが見つかりません。`);
     this.DOM = { btn, target, bgArea };
     this.circleDiameter = settings.diameter;
     this.circleInterval = settings.interval;
@@ -163,7 +163,7 @@ class StaticNaviMenu {
     this.prevDirection = "fromRight";
   }
 
-  async _toggle(dataIndex: number) {
+  private async _toggle(dataIndex: number) {
     const target = this.DOM.target;
     const bgArea = this.DOM.bgArea;
     const move: MoveObjects = {
