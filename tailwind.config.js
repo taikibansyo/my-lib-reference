@@ -1,28 +1,21 @@
+/** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: 'class',
   content: [
-    "./src/**/*.{ts,tsx}",
-    "./components/**/*.{ts,tsx}",
-    "./app/**/*.{ts,tsx}",
-    "./node_modules/@shadcn/ui/**/*.{js,ts,tsx}"
+    "./src/app/*.{js,ts,jsx,tsx}",
+    "./src/app/**/*.{js,ts,jsx,tsx}",
+    "./src/components/**/*.{js,ts,jsx,tsx}",
+    "./node_modules/@shadcn/ui/**/*.{js,ts,jsx,tsx}",
   ],
-  purge: [],
   theme: {
     extend: {
       colors: {
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
       },
-      borderRadius: {
-        lg: 'var(--radius)',
-      },
-      fontFamily: {
-        sans: ['var(--font-sans)', 'sans-serif'],
-      }
+      borderRadius: { lg: 'var(--radius)' },
+      fontFamily: { sans: ['var(--font-sans)', 'sans-serif'] },
     },
-  },
-  variants: {
-    extend: {},
   },
   plugins: [],
 }
