@@ -2,3 +2,15 @@ node_modules/
 .next/
 .DS_Store
 dist/
+
+# === charanko ディレクトリ内の Next.js ビルド成果物を無視 ===
+/charanko/.next/
+/charanko/.next/**
+
+# トレース／マニフェスト類
+/charanko/.next/trace
+/charanko/.next/server/
+/charanko/.next/server/**
+
+# 静的チャンクの CSS／マップ
+/charanko/.next/static/chunks/
