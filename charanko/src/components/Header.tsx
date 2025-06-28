@@ -8,10 +8,12 @@ import {
 } from "@/components/ui/navigation-menu";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { useMenuStore } from "@/store/useMenuStore";
-import { Menu as MenuIcon, X as CloseIcon } from "lucide-react";
+import { useAuthStore } from "@/store/useAuthStore";
+import { Menu as MenuIcon, X as CloseIcon, User as UserIcon } from "lucide-react";
 
 export default function Header() {
   const { menuOpen, toggleMenu, closeMenu } = useMenuStore();
+  const { user } = useAuthStore();
 
   return (
     <header className="border-b relative">
@@ -45,9 +47,38 @@ export default function Header() {
                 About
               </Link>
             </NavigationMenuItem>
+            {!user && (
+              <NavigationMenuItem>
+                <Link
+                  href="/register"
+                  className="text-muted-foreground hover:underline"
+                >
+                  会員登録
+                </Link>
+              </NavigationMenuItem>
+            )}
+            {user && (
+              <NavigationMenuItem>
+                <Link
+                  href="/mypage"
+                  className="text-muted-foreground hover:underline"
+                >
+                  マイページ
+                </Link>
+              </NavigationMenuItem>
+            )}
           </NavigationMenuList>
         </NavigationMenu>
-        <ThemeToggle />
+        
+        <div className="flex items-center gap-2">
+          {user && (
+            <div className="flex items-center gap-2 text-sm">
+              <UserIcon size={16} />
+              <span>{user.name}</span>
+            </div>
+          )}
+          <ThemeToggle />
+        </div>
       </div>
 
       {/* オーバーレイ：メニュー以外の領域をクリックガード */}
@@ -80,7 +111,22 @@ export default function Header() {
         <Link href="/about" onClick={closeMenu} className="text-lg font-medium">
           About
         </Link>
-        {/* 必要に応じて他リンク */}
+        {!user && (
+          <Link href="/register" onClick={closeMenu} className="text-lg font-medium">
+            会員登録
+          </Link>
+        )}
+        {user && (
+          <>
+            <Link href="/mypage" onClick={closeMenu} className="text-lg font-medium">
+              マイページ
+            </Link>
+            <div className="flex items-center gap-2 text-lg font-medium">
+              <UserIcon size={20} />
+              <span>{user.name}</span>
+            </div>
+          </>
+        )}
       </nav>
     </header>
   );

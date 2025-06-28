@@ -10,6 +10,7 @@
     "test": "vitest"
   },
   "dependencies": {
+    "@anthropic-ai/claude-code": "^1.0.35",
     "@radix-ui/react-navigation-menu": "^1.2.13",
     "@radix-ui/react-slot": "^1.2.3",
     "@tailwindcss/postcss": "^4.1.10",
