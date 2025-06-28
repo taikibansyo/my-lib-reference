@@ -1,19 +1,17 @@
-node_modules/
-.next/
+# OSごとの不要ファイル
 .DS_Store
+
+# 共通：依存ファイル・ビルド成果物
+node_modules/
 dist/
+.next/
+out/
 
-# === charanko ディレクトリ内の Next.js ビルド成果物を無視 ===
-/charanko/.next/
-/charanko/.next/**
-
-# トレース／マニフェスト類
-/charanko/.next/trace
-/charanko/.next/server/
-/charanko/.next/server/**
-
-# 静的チャンクの CSS／マップ
-/charanko/.next/static/chunks//charanko/node_modules/
-
+# charanko プロジェクト用（Next.js）
 /charanko/node_modules/
+/charanko/.next/
+# 任意：静的生成ファイル（export時）
+/charanko/out/
+
+# Claude Code CLI のローカル設定
 .claude/settings.local.json
