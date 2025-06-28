@@ -1,0 +1,87 @@
+// components/Header.tsx
+"use client";
+import Link from "next/link";
+import {
+  NavigationMenu,
+  NavigationMenuItem,
+  NavigationMenuList,
+} from "@/components/ui/navigation-menu";
+import { ThemeToggle } from "@/components/theme-toggle";
+import { useMenuStore } from "@/store/useMenuStore";
+import { Menu as MenuIcon, X as CloseIcon } from "lucide-react";
+
+export default function Header() {
+  const { menuOpen, toggleMenu, closeMenu } = useMenuStore();
+
+  return (
+    <header className="border-b relative">
+      <div className="max-w-5xl mx-auto px-4 py-4 flex justify-between items-center gap-4">
+        {/* モバイル用ハンバーガー */}
+        <button
+          onClick={toggleMenu}
+          aria-label="メニュー切替"
+          className="md:hidden"
+        >
+          {menuOpen ? <CloseIcon /> : <MenuIcon />}
+        </button>
+
+        <Link href="/" className="text-2xl font-bold text-primary">
+          Charanko
+        </Link>
+
+        {/* デスクトップメニュー */}
+        <NavigationMenu className="hidden md:block">
+          <NavigationMenuList className="flex flex-row gap-4">
+            <NavigationMenuItem>
+              <Link href="/" className="text-muted-foreground hover:underline">
+                Home
+              </Link>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+              <Link
+                href="/about"
+                className="text-muted-foreground hover:underline"
+              >
+                About
+              </Link>
+            </NavigationMenuItem>
+          </NavigationMenuList>
+        </NavigationMenu>
+        <ThemeToggle />
+      </div>
+
+      {/* オーバーレイ：メニュー以外の領域をクリックガード */}
+      {menuOpen && (
+        <div
+          className="fixed inset-0 bg-black/30 md:hidden z-40"
+          onClick={closeMenu}
+        />
+      )}
+
+      {/* モバイルメニュー（常時レンダリング） */}
+      <nav
+        className={`
+            fixed inset-0 bg-white p-6 flex flex-col space-y-4 md:hidden z-50
+            transform transition-transform duration-300 ease-in-out w-5/6
+            ${menuOpen ? "translate-x-0" : "-translate-x-full"}
+            dark:bg-gray-800
+          `}
+      >
+        <button
+          onClick={closeMenu}
+          aria-label="メニューを閉じる"
+          className="absolute top-4 right-4"
+        >
+          <CloseIcon />
+        </button>
+        <Link href="/" onClick={closeMenu} className="text-lg font-medium">
+          Home
+        </Link>
+        <Link href="/about" onClick={closeMenu} className="text-lg font-medium">
+          About
+        </Link>
+        {/* 必要に応じて他リンク */}
+      </nav>
+    </header>
+  );
+}
