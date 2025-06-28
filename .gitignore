@@ -13,4 +13,4 @@ dist/
 /charanko/.next/server/**
 
 # 静的チャンクの CSS／マップ
-/charanko/.next/static/chunks/
+/charanko/.next/static/chunks//charanko/node_modules/
