@@ -5,11 +5,16 @@ import {
   NavigationMenu,
   NavigationMenuItem,
   NavigationMenuList,
+  NavigationMenuLink,
 } from "@/components/ui/navigation-menu";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { useMenuStore } from "@/store/useMenuStore";
 import { useAuthStore } from "@/store/useAuthStore";
-import { Menu as MenuIcon, X as CloseIcon, User as UserIcon } from "lucide-react";
+import {
+  Menu as MenuIcon,
+  X as CloseIcon,
+  User as UserIcon,
+} from "lucide-react";
 
 export default function Header() {
   const { menuOpen, toggleMenu, closeMenu } = useMenuStore();
@@ -35,41 +40,28 @@ export default function Header() {
         <NavigationMenu className="hidden md:block">
           <NavigationMenuList className="flex flex-row gap-4">
             <NavigationMenuItem>
-              <Link href="/" className="text-muted-foreground hover:underline">
-                Home
-              </Link>
+              <NavigationMenuLink href="/">Home</NavigationMenuLink>
             </NavigationMenuItem>
             <NavigationMenuItem>
-              <Link
-                href="/about"
-                className="text-muted-foreground hover:underline"
-              >
-                About
-              </Link>
+              <NavigationMenuLink href="/about">About</NavigationMenuLink>
             </NavigationMenuItem>
             {!user && (
               <NavigationMenuItem>
-                <Link
-                  href="/register"
-                  className="text-muted-foreground hover:underline"
-                >
+                <NavigationMenuLink href="/register">
                   会員登録
-                </Link>
+                </NavigationMenuLink>
               </NavigationMenuItem>
             )}
             {user && (
               <NavigationMenuItem>
-                <Link
-                  href="/mypage"
-                  className="text-muted-foreground hover:underline"
-                >
+                <NavigationMenuLink href="/mypage">
                   マイページ
-                </Link>
+                </NavigationMenuLink>
               </NavigationMenuItem>
             )}
           </NavigationMenuList>
         </NavigationMenu>
-        
+
         <div className="flex items-center gap-2">
           {user && (
             <div className="flex items-center gap-2 text-sm">
@@ -112,13 +104,21 @@ export default function Header() {
           About
         </Link>
         {!user && (
-          <Link href="/register" onClick={closeMenu} className="text-lg font-medium">
+          <Link
+            href="/register"
+            onClick={closeMenu}
+            className="text-lg font-medium"
+          >
             会員登録
           </Link>
         )}
         {user && (
           <>
-            <Link href="/mypage" onClick={closeMenu} className="text-lg font-medium">
+            <Link
+              href="/mypage"
+              onClick={closeMenu}
+              className="text-lg font-medium"
+            >
               マイページ
             </Link>
             <div className="flex items-center gap-2 text-lg font-medium">
