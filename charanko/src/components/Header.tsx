@@ -1,6 +1,7 @@
 // components/Header.tsx
 "use client";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -10,6 +11,7 @@ import {
 import { ThemeToggle } from "@/components/theme-toggle";
 import { useMenuStore } from "@/store/useMenuStore";
 import { useAuthStore } from "@/store/useAuthStore";
+import { cn } from "@/lib/utils";
 import {
   Menu as MenuIcon,
   X as CloseIcon,
@@ -19,6 +21,7 @@ import {
 export default function Header() {
   const { menuOpen, toggleMenu, closeMenu } = useMenuStore();
   const { user } = useAuthStore();
+  const pathname = usePathname();
 
   return (
     <header className="border-b relative">
@@ -97,17 +100,34 @@ export default function Header() {
         >
           <CloseIcon />
         </button>
-        <Link href="/" onClick={closeMenu} className="text-lg font-medium">
+        <Link 
+          href="/" 
+          onClick={closeMenu} 
+          className={cn(
+            "text-lg font-medium opacity-60 hover:opacity-100 transition-opacity",
+            pathname === "/" && "opacity-100 text-accent-foreground"
+          )}
+        >
           Home
         </Link>
-        <Link href="/about" onClick={closeMenu} className="text-lg font-medium">
+        <Link 
+          href="/about" 
+          onClick={closeMenu} 
+          className={cn(
+            "text-lg font-medium opacity-60 hover:opacity-100 transition-opacity",
+            pathname === "/about" && "opacity-100 text-accent-foreground"
+          )}
+        >
           About
         </Link>
         {!user && (
           <Link
             href="/register"
             onClick={closeMenu}
-            className="text-lg font-medium"
+            className={cn(
+              "text-lg font-medium opacity-60 hover:opacity-100 transition-opacity",
+              pathname === "/register" && "opacity-100 text-accent-foreground"
+            )}
           >
             会員登録
           </Link>
@@ -117,7 +137,10 @@ export default function Header() {
             <Link
               href="/mypage"
               onClick={closeMenu}
-              className="text-lg font-medium"
+              className={cn(
+                "text-lg font-medium opacity-60 hover:opacity-100 transition-opacity",
+                pathname === "/mypage" && "opacity-100 text-accent-foreground"
+              )}
             >
               マイページ
             </Link>
