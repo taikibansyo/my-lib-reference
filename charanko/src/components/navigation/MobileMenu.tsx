@@ -1,11 +1,12 @@
 "use client";
 
-import Link from "next/link";
+import NavigationLink from "./NavigationLink";
 import { usePathname } from "next/navigation";
 import { useMenuStore } from "@/store/useMenuStore";
 import { useAuthStore } from "@/store/useAuthStore";
 import { cn } from "@/lib/utils";
 import { X as CloseIcon, User as UserIcon } from "lucide-react";
+import { navigationMenuItemLinkStyle } from "@/components/ui/navigation-menu";
 
 export default function MobileMenu() {
   const { menuOpen, closeMenu } = useMenuStore();
@@ -28,54 +29,54 @@ export default function MobileMenu() {
       >
         <CloseIcon />
       </button>
-      
-      <Link 
-        href="/" 
-        onClick={closeMenu} 
-        className={cn(
-          "text-lg font-medium opacity-60 hover:opacity-100 transition-opacity",
-          pathname === "/" && "opacity-100 text-accent-foreground"
-        )}
+
+      <NavigationLink
+        href="/"
+        onClick={closeMenu}
+        className={navigationMenuItemLinkStyle({
+          mobile: true,
+          active: pathname === "/",
+        })}
       >
         Home
-      </Link>
-      
-      <Link 
-        href="/about" 
-        onClick={closeMenu} 
-        className={cn(
-          "text-lg font-medium opacity-60 hover:opacity-100 transition-opacity",
-          pathname === "/about" && "opacity-100 text-accent-foreground"
-        )}
+      </NavigationLink>
+
+      <NavigationLink
+        href="/about"
+        onClick={closeMenu}
+        className={navigationMenuItemLinkStyle({
+          mobile: true,
+          active: pathname === "/about",
+        })}
       >
         About
-      </Link>
-      
+      </NavigationLink>
+
       {!user && (
-        <Link
+        <NavigationLink
           href="/register"
           onClick={closeMenu}
-          className={cn(
-            "text-lg font-medium opacity-60 hover:opacity-100 transition-opacity",
-            pathname === "/register" && "opacity-100 text-accent-foreground"
-          )}
+          className={navigationMenuItemLinkStyle({
+            mobile: true,
+            active: pathname === "/register",
+          })}
         >
           会員登録
-        </Link>
+        </NavigationLink>
       )}
-      
+
       {user && (
         <>
-          <Link
+          <NavigationLink
             href="/mypage"
             onClick={closeMenu}
-            className={cn(
-              "text-lg font-medium opacity-60 hover:opacity-100 transition-opacity",
-              pathname === "/mypage" && "opacity-100 text-accent-foreground"
-            )}
+            className={navigationMenuItemLinkStyle({
+              mobile: true,
+              active: pathname === "/mypage",
+            })}
           >
             マイページ
-          </Link>
+          </NavigationLink>
           <div className="flex items-center gap-2 text-lg font-medium">
             <UserIcon size={20} />
             <span>{user.name}</span>

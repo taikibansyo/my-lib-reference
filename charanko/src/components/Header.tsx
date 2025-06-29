@@ -1,16 +1,11 @@
 // components/Header.tsx
 "use client";
 import Link from "next/link";
-import {
-  NavigationMenu,
-  NavigationMenuItem,
-  NavigationMenuList,
-  NavigationMenuLink,
-} from "@/components/ui/navigation-menu";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { useMenuStore } from "@/store/useMenuStore";
 import { useAuthStore } from "@/store/useAuthStore";
-import MobileMenu from "@/components/MobileMenu";
+import DesktopMenu from "@/components/navigation/DesktopMenu";
+import MobileMenu from "@/components/navigation/MobileMenu";
 import {
   Menu as MenuIcon,
   X as CloseIcon,
@@ -38,30 +33,7 @@ export default function Header() {
         </Link>
 
         {/* デスクトップメニュー */}
-        <NavigationMenu className="hidden md:block">
-          <NavigationMenuList className="flex flex-row gap-4">
-            <NavigationMenuItem>
-              <NavigationMenuLink href="/">Home</NavigationMenuLink>
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-              <NavigationMenuLink href="/about">About</NavigationMenuLink>
-            </NavigationMenuItem>
-            {!user && (
-              <NavigationMenuItem>
-                <NavigationMenuLink href="/register">
-                  会員登録
-                </NavigationMenuLink>
-              </NavigationMenuItem>
-            )}
-            {user && (
-              <NavigationMenuItem>
-                <NavigationMenuLink href="/mypage">
-                  マイページ
-                </NavigationMenuLink>
-              </NavigationMenuItem>
-            )}
-          </NavigationMenuList>
-        </NavigationMenu>
+        <DesktopMenu />
 
         <div className="flex items-center gap-2">
           {user && (

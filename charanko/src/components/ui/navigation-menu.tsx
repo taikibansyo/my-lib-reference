@@ -175,6 +175,48 @@ function NavigationMenuIndicator({
   );
 }
 
+const navigationMenuItemLinkStyle = cva(
+  // 共通のベーススタイル
+  "transition-opacity opacity-60 hover:opacity-100",
+  {
+    variants: {
+      // デスクトップ用ベース
+      desktop: {
+        true: ["hover:underline underline-offset-4"],
+      },
+      // モバイル用ベース
+      mobile: {
+        true: ["text-lg font-medium rounded-sm"],
+        false: "",
+      },
+      // 共通 active
+      active: {
+        true: ["data-[active=true]:opacity-100"],
+        false: "",
+      },
+    },
+    compoundVariants: [
+      {
+        // デスクトップ用 active
+        desktop: true,
+        active: true,
+        class:
+          "md:data-[active=true]:bg-accent/50 data-[active=true]:text-accent-foreground",
+      },
+      {
+        // モバイル用 active
+        mobile: true,
+        active: true,
+        class: "bg-accent/50",
+      },
+    ],
+    defaultVariants: {
+      active: false,
+      mobile: false,
+    },
+  }
+);
+
 export {
   NavigationMenu,
   NavigationMenuList,
@@ -185,4 +227,5 @@ export {
   NavigationMenuIndicator,
   NavigationMenuViewport,
   navigationMenuTriggerStyle,
+  navigationMenuItemLinkStyle,
 };
