@@ -4,7 +4,7 @@ import Link from "next/link";
 
 export default function Page() {
   return (
-    <main className="p-10 bg-background text-foreground space-y-4 max-w-5xl mx-auto">
+    <main className="min-h-screen p-4">
       <h1 className="text-2xl font-bold">テーマ切り替えテスト</h1>
       <Button>確認ボタン</Button>
       <div className="p-4 max-w-4xl mx-auto">
