@@ -52,6 +52,17 @@ export default function MobileMenu() {
         About
       </NavigationLink>
 
+      <NavigationLink
+        href="/blog"
+        onClick={closeMenu}
+        className={navigationMenuItemLinkStyle({
+          mobile: true,
+          active: pathname === "/blog",
+        })}
+      >
+        Blog
+      </NavigationLink>
+
       {!user && (
         <NavigationLink
           href="/register"

@@ -38,6 +38,17 @@ export default function DesktopMenu() {
             About
           </NavigationLink>
         </NavigationMenuItem>
+        <NavigationMenuItem>
+          <NavigationLink
+            href="/blog"
+            className={navigationMenuItemLinkStyle({
+              desktop: true,
+              active: pathname === "/blog",
+            })}
+          >
+            Blog
+          </NavigationLink>
+        </NavigationMenuItem>
         {!user && (
           <NavigationMenuItem>
             <NavigationLink
