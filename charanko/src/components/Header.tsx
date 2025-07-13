@@ -6,6 +6,7 @@ import { useMenuStore } from "@/store/useMenuStore";
 import { useAuthStore } from "@/store/useAuthStore";
 import DesktopMenu from "@/components/navigation/DesktopMenu";
 import MobileMenu from "@/components/navigation/MobileMenu";
+import { SearchBox } from "@/components/SearchBox";
 import {
   Menu as MenuIcon,
   X as CloseIcon,
@@ -15,6 +16,11 @@ import {
 export default function Header() {
   const { menuOpen, toggleMenu, closeMenu } = useMenuStore();
   const { user } = useAuthStore();
+
+  const handleSearch = (query: string) => {
+    console.log('検索クエリ:', query);
+    // 今後、検索機能を実装する際に使用
+  };
 
   return (
     <header className="border-b relative">
@@ -34,6 +40,15 @@ export default function Header() {
 
         {/* デスクトップメニュー */}
         <DesktopMenu />
+
+        {/* 検索窓 */}
+        <div className="hidden md:block">
+          <SearchBox 
+            variant="compact" 
+            onSearch={handleSearch}
+            className="w-auto"
+          />
+        </div>
 
         <div className="flex items-center gap-2">
           {user && (
