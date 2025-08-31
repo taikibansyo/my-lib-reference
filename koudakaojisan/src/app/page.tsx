@@ -1,10 +1,19 @@
+"use client";
+import Timetable from "@/components/timetable/Timetable";
+import AddQuick from "@/components/timetable/AddQuick";
+import SenseiBubble from "@/components/common/SenseiBubble";
+import { useBoardStore } from "@/store/useBoardStore";
+import { randomSenseiMessage } from "@/lib/sensei";
+
 export default function Page() {
+  const tasks = useBoardStore((s) => s.tasks);
+  const add = useBoardStore((s) => s.add);
   return (
-    <main className="min-h-screen grid place-items-center p-6">
-      <div className="text-center space-y-3">
-        <h1 className="text-3xl font-bold">HOME</h1>
-        <p className="text-muted-foreground">シンプルなホーム画面のみの構成です。</p>
-      </div>
-    </main>
+    <div className="space-y-4">
+      <h1 className="text-2xl font-bold">今日（時間割）</h1>
+      <Timetable tasks={tasks} />
+      <SenseiBubble message={randomSenseiMessage()} />
+      <AddQuick onAdd={add} />
+    </div>
   );
 }
