@@ -9,8 +9,8 @@ import Sidebar from "@/components/common/Sidebar";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Charanko",
-  description: "A modern UI library project",
+  title: "Koudakaojisan",
+  description: "Classroom helper dashboard (demo)",
 };
 
 export default function RootLayout({
