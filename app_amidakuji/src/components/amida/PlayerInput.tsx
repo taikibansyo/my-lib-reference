@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useAmidaStore } from "@/store/useAmidaStore";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { ensureGoalLabels, sanitizeEntries } from "@/lib/amida";
 
 export default function PlayerInput() {
   const participants = useAmidaStore((s) => s.participants);
@@ -17,12 +18,13 @@ export default function PlayerInput() {
   useEffect(() => setNamesText(participants.join("\n")), [participants]);
   useEffect(() => setGoalsText(goals.join("\n")), [goals]);
 
+  const parseEntries = (value: string) => sanitizeEntries(value.split(/\n|,/));
+
   const onApply = () => {
-    const names = namesText.split(/\n|,/).map((s) => s.trim()).filter(Boolean);
-    const labels = goalsText.split(/\n|,/).map((s) => s.trim()).filter(Boolean);
-    while (labels.length < names.length) labels.push(`ゴール${labels.length + 1}`);
+    const names = parseEntries(namesText);
+    const labels = ensureGoalLabels(parseEntries(goalsText), names.length);
     setParticipants(names);
-    setGoals(labels.slice(0, names.length));
+    setGoals(labels);
   };
 
   return (
@@ -42,4 +44,3 @@ export default function PlayerInput() {
     </div>
   );
 }
-

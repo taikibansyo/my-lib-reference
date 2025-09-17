@@ -1,35 +1,32 @@
 "use client";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useAmidaStore } from "@/store/useAmidaStore";
 import { cn } from "@/lib/utils";
+import { buildRungMap } from "@/lib/amida";
 
 type Props = {
   className?: string;
 };
 
 export default function AmidaCanvas({ className }: Props) {
-  const { participants, goals, rows, rungs, selectedStart, pickStart, computeEnd, setStatus, saveHistory } = useAmidaStore();
+  const { participants, goals, rows, rungs, selectedStart, pickStart, setStatus, saveHistory } = useAmidaStore();
   const cols = participants.length;
 
   const [animDone, setAnimDone] = useState(false);
 
   useEffect(() => {
-    if (animDone && selectedStart != null) {
-      const mapping: Record<string, string> = {};
-      participants.forEach((p, i) => {
-        const e = computeEnd(i);
-        mapping[p] = goals[e] ?? `ゴール${e + 1}`;
-      });
-      saveHistory(mapping);
-      setStatus("done");
-    }
-  }, [animDone, selectedStart]);
+    if (!animDone || selectedStart == null) return;
+    saveHistory();
+    setStatus("done");
+  }, [animDone, saveHistory, selectedStart, setStatus]);
 
   const padding = 16;
   const rungStroke = 3;
   const height = 360;
 
-  const computePoints = (start: number, width: number): string => {
+  const rungMap = useMemo(() => buildRungMap(rungs), [rungs]);
+
+  const computePoints = useCallback((start: number, width: number): string => {
     const innerW = width - padding * 2;
     const innerH = height - padding * 2;
     const colGap = innerW / (cols - 1 || 1);
@@ -42,8 +39,9 @@ export default function AmidaCanvas({ className }: Props) {
     pts.push([x(c), y(0)]);
     for (let r = 0; r < rows; r++) {
       pts.push([x(c), y(r)]);
-      const right = rungs.some((h) => h.row === r && h.col === c);
-      const left = rungs.some((h) => h.row === r && h.col === c - 1);
+      const rowRungs = rungMap.get(r);
+      const right = rowRungs?.has(c) ?? false;
+      const left = rowRungs?.has(c - 1) ?? false;
       if (right) {
         pts.push([x(c + 1), y(r)]);
         c = Math.min(c + 1, cols - 1);
@@ -54,7 +52,7 @@ export default function AmidaCanvas({ className }: Props) {
     }
     pts.push([x(c), padding + innerH]);
     return pts.map((p) => p.join(",")).join(" ");
-  };
+  }, [cols, rows, rungMap]);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const [w, setW] = useState(320);
@@ -69,7 +67,7 @@ export default function AmidaCanvas({ className }: Props) {
 
   const pathRef = useRef<SVGPolylineElement>(null);
   const [dash, setDash] = useState<number>(0);
-  const points = useMemo(() => (selectedStart != null ? computePoints(selectedStart, w) : ""), [selectedStart, w, cols, rows, rungs]);
+  const points = useMemo(() => (selectedStart != null ? computePoints(selectedStart, w) : ""), [computePoints, selectedStart, w]);
   useEffect(() => {
     const el = pathRef.current;
     if (!el) return;
@@ -133,4 +131,3 @@ export default function AmidaCanvas({ className }: Props) {
     </div>
   );
 }
-

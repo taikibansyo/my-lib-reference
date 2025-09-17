@@ -1,7 +1,13 @@
 "use client";
 import { create } from "zustand";
-
-export type Rung = { row: number; col: number };
+import {
+  createAssignments,
+  createRungs,
+  ensureGoalLabels,
+  sanitizeEntries,
+  traverseLadder,
+  type Rung,
+} from "@/lib/amida";
 
 type State = {
   participants: string[];
@@ -19,29 +25,10 @@ type Actions = {
   generate: () => void;
   pickStart: (index: number) => void;
   setStatus: (s: State["status"]) => void;
-  saveHistory: (mapping: Record<string, string>) => void;
+  saveHistory: () => void;
   reset: () => void;
   computeEnd: (start: number) => number;
 };
-
-function createRungs(cols: number, rows: number): Rung[] {
-  const rungs: Rung[] = [];
-  for (let r = 0; r < rows; r++) {
-    if (Math.random() < 0.6) {
-      const possible: number[] = [];
-      for (let c = 0; c < cols - 1; c++) {
-        if (!rungs.some((x) => x.row === r && (x.col === c || x.col === c - 1 || x.col === c + 1))) {
-          possible.push(c);
-        }
-      }
-      if (possible.length) {
-        const c = possible[Math.floor(Math.random() * possible.length)];
-        rungs.push({ row: r, col: c });
-      }
-    }
-  }
-  return rungs.sort((a, b) => a.row - b.row);
-}
 
 export const useAmidaStore = create<State & Actions>((set, get) => ({
   participants: ["Aさん", "Bさん", "Cさん"],
@@ -51,19 +38,15 @@ export const useAmidaStore = create<State & Actions>((set, get) => ({
   selectedStart: null,
   status: "editing",
   history: [],
-  setParticipants: (names) => set((s) => ({
-    participants: names.filter((n) => n.trim() !== ""),
-    goals: (() => {
-      const len = names.filter((n) => n.trim() !== "").length;
-      const g = [...s.goals];
-      if (g.length < len) {
-        for (let i = g.length; i < len; i++) g.push(`ゴール${i + 1}`);
-      }
-      return g.slice(0, len);
-    })(),
+  setParticipants: (names) => set((state) => {
+    const entries = sanitizeEntries(names);
+    const goals = ensureGoalLabels(state.goals, entries.length);
+    return { participants: entries, goals, status: "editing" };
+  }),
+  setGoals: (labels) => set((state) => ({
+    goals: ensureGoalLabels(labels, state.participants.length),
     status: "editing",
   })),
-  setGoals: (labels) => set({ goals: labels, status: "editing" }),
   generate: () => set((s) => ({
     rungs: createRungs(s.participants.length, s.rows),
     selectedStart: null,
@@ -71,8 +54,13 @@ export const useAmidaStore = create<State & Actions>((set, get) => ({
   })),
   pickStart: (index) => set({ selectedStart: index, status: "animating" }),
   setStatus: (status) => set({ status }),
-  saveHistory: (mapping) => set((s) => {
+  saveHistory: () => set((s) => {
     try {
+      const mapping = createAssignments(s.participants, s.goals, {
+        cols: s.participants.length,
+        rows: s.rows,
+        rungs: s.rungs,
+      });
       const next = [...s.history, { at: Date.now(), mapping }];
       if (typeof window !== "undefined") {
         localStorage.setItem("amida_history", JSON.stringify(next));
@@ -85,16 +73,6 @@ export const useAmidaStore = create<State & Actions>((set, get) => ({
   reset: () => set({ rungs: [], selectedStart: null, status: "editing" }),
   computeEnd: (start) => {
     const { participants, rows, rungs } = get();
-    const cols = participants.length;
-    let c = start;
-    for (let r = 0; r < rows; r++) {
-      if (rungs.some((x) => x.row === r && x.col === c)) {
-        c = Math.min(c + 1, cols - 1);
-      } else if (rungs.some((x) => x.row === r && x.col === c - 1)) {
-        c = Math.max(c - 1, 0);
-      }
-    }
-    return c;
+    return traverseLadder({ cols: participants.length, rows, rungs }, start);
   },
 }));
-
