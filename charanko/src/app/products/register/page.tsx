@@ -3,9 +3,15 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+// import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import Link from "next/link";
 
@@ -16,7 +22,7 @@ export default function ProductRegisterPage() {
     category: "",
     condition: "",
     description: "",
-    exchangeDetails: ""
+    exchangeDetails: "",
   });
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -46,7 +52,7 @@ export default function ProductRegisterPage() {
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
               <Label htmlFor="images">出品画像</Label>
-              <Input
+              <input
                 id="images"
                 type="file"
                 multiple
@@ -60,11 +66,13 @@ export default function ProductRegisterPage() {
 
             <div className="space-y-2">
               <Label htmlFor="name">商品名</Label>
-              <Input
+              <input
                 id="name"
                 placeholder="商品名を入力してください"
                 value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
               />
             </div>
 
@@ -72,7 +80,9 @@ export default function ProductRegisterPage() {
               <Label htmlFor="category">カテゴリー</Label>
               <Select
                 value={formData.category}
-                onValueChange={(value) => setFormData({ ...formData, category: value })}
+                onValueChange={(value) =>
+                  setFormData({ ...formData, category: value })
+                }
               >
                 <SelectTrigger>
                   <SelectValue placeholder="カテゴリーを選択してください" />
@@ -93,7 +103,9 @@ export default function ProductRegisterPage() {
               <Label htmlFor="condition">商品の状態</Label>
               <Select
                 value={formData.condition}
-                onValueChange={(value) => setFormData({ ...formData, condition: value })}
+                onValueChange={(value) =>
+                  setFormData({ ...formData, condition: value })
+                }
               >
                 <SelectTrigger>
                   <SelectValue placeholder="商品の状態を選択してください" />
@@ -115,7 +127,9 @@ export default function ProductRegisterPage() {
                 id="description"
                 placeholder="商品の詳細、使用感、注意点などを入力してください"
                 value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, description: e.target.value })
+                }
                 rows={4}
               />
             </div>
@@ -126,7 +140,9 @@ export default function ProductRegisterPage() {
                 id="exchangeDetails"
                 placeholder="どのような商品と交換したいか、条件などを入力してください"
                 value={formData.exchangeDetails}
-                onChange={(e) => setFormData({ ...formData, exchangeDetails: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, exchangeDetails: e.target.value })
+                }
                 rows={3}
               />
             </div>
