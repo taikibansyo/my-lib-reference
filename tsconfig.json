@@ -31,5 +31,11 @@
     "tailwind.config.js",
     "next.config.js"
   ],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules",
+    "charanko",
+    "koudakaojisan",
+    "app_amidakuji",
+    "_archive"
+  ]
 }
